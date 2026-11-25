@@ -21,7 +21,7 @@ for (const file of await readdir("dist/server")) {
 await cp(".open-next/assets", "dist/client", { recursive: true });
 await mkdir("dist/.openai", { recursive: true });
 await cp(".openai/hosting.json", "dist/.openai/hosting.json");
-await cp("prisma/d1", "dist/drizzle", { recursive: true });
+await cp("drizzle", "dist/drizzle", { recursive: true });
 
 const config = {
   name: "encauza",

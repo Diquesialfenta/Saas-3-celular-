@@ -12,6 +12,7 @@ CREATE TABLE "User" (
     "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" DATETIME NOT NULL
 );
+--> statement-breakpoint
 
 -- CreateTable
 CREATE TABLE "Session" (
@@ -25,6 +26,7 @@ CREATE TABLE "Session" (
     "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT "Session_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User" ("id") ON DELETE CASCADE ON UPDATE CASCADE
 );
+--> statement-breakpoint
 
 -- CreateTable
 CREATE TABLE "Token" (
@@ -40,6 +42,7 @@ CREATE TABLE "Token" (
     "usedAt" DATETIME,
     "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
+--> statement-breakpoint
 
 -- CreateTable
 CREATE TABLE "Plan" (
@@ -62,6 +65,7 @@ CREATE TABLE "Plan" (
     "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" DATETIME NOT NULL
 );
+--> statement-breakpoint
 
 -- CreateTable
 CREATE TABLE "Subscription" (
@@ -82,6 +86,7 @@ CREATE TABLE "Subscription" (
     CONSTRAINT "Subscription_planId_fkey" FOREIGN KEY ("planId") REFERENCES "Plan" ("id") ON DELETE RESTRICT ON UPDATE CASCADE,
     CONSTRAINT "Subscription_couponId_fkey" FOREIGN KEY ("couponId") REFERENCES "Coupon" ("id") ON DELETE SET NULL ON UPDATE CASCADE
 );
+--> statement-breakpoint
 
 -- CreateTable
 CREATE TABLE "Coupon" (
@@ -98,6 +103,7 @@ CREATE TABLE "Coupon" (
     "isActive" BOOLEAN NOT NULL DEFAULT true,
     "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
+--> statement-breakpoint
 
 -- CreateTable
 CREATE TABLE "PlatformPayment" (
@@ -112,6 +118,7 @@ CREATE TABLE "PlatformPayment" (
     "paidAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT "PlatformPayment_workspaceId_fkey" FOREIGN KEY ("workspaceId") REFERENCES "Workspace" ("id") ON DELETE CASCADE ON UPDATE CASCADE
 );
+--> statement-breakpoint
 
 -- CreateTable
 CREATE TABLE "PlatformTicket" (
@@ -124,6 +131,7 @@ CREATE TABLE "PlatformTicket" (
     "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" DATETIME NOT NULL
 );
+--> statement-breakpoint
 
 -- CreateTable
 CREATE TABLE "PlatformSetting" (
@@ -131,6 +139,7 @@ CREATE TABLE "PlatformSetting" (
     "value" JSONB NOT NULL,
     "updatedAt" DATETIME NOT NULL
 );
+--> statement-breakpoint
 
 -- CreateTable
 CREATE TABLE "Workspace" (
@@ -164,6 +173,7 @@ CREATE TABLE "Workspace" (
     "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" DATETIME NOT NULL
 );
+--> statement-breakpoint
 
 -- CreateTable
 CREATE TABLE "Membership" (
@@ -181,6 +191,7 @@ CREATE TABLE "Membership" (
     CONSTRAINT "Membership_customRoleId_fkey" FOREIGN KEY ("customRoleId") REFERENCES "Role" ("id") ON DELETE SET NULL ON UPDATE CASCADE,
     CONSTRAINT "Membership_departmentId_fkey" FOREIGN KEY ("departmentId") REFERENCES "Department" ("id") ON DELETE SET NULL ON UPDATE CASCADE
 );
+--> statement-breakpoint
 
 -- CreateTable
 CREATE TABLE "Role" (
@@ -192,6 +203,7 @@ CREATE TABLE "Role" (
     "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT "Role_workspaceId_fkey" FOREIGN KEY ("workspaceId") REFERENCES "Workspace" ("id") ON DELETE CASCADE ON UPDATE CASCADE
 );
+--> statement-breakpoint
 
 -- CreateTable
 CREATE TABLE "Department" (
@@ -203,6 +215,7 @@ CREATE TABLE "Department" (
     "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT "Department_workspaceId_fkey" FOREIGN KEY ("workspaceId") REFERENCES "Workspace" ("id") ON DELETE CASCADE ON UPDATE CASCADE
 );
+--> statement-breakpoint
 
 -- CreateTable
 CREATE TABLE "Client" (
@@ -226,6 +239,7 @@ CREATE TABLE "Client" (
     "updatedAt" DATETIME NOT NULL,
     CONSTRAINT "Client_workspaceId_fkey" FOREIGN KEY ("workspaceId") REFERENCES "Workspace" ("id") ON DELETE CASCADE ON UPDATE CASCADE
 );
+--> statement-breakpoint
 
 -- CreateTable
 CREATE TABLE "Contact" (
@@ -240,6 +254,7 @@ CREATE TABLE "Contact" (
     "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT "Contact_clientId_fkey" FOREIGN KEY ("clientId") REFERENCES "Client" ("id") ON DELETE CASCADE ON UPDATE CASCADE
 );
+--> statement-breakpoint
 
 -- CreateTable
 CREATE TABLE "PortalAccess" (
@@ -252,6 +267,7 @@ CREATE TABLE "PortalAccess" (
     CONSTRAINT "PortalAccess_clientId_fkey" FOREIGN KEY ("clientId") REFERENCES "Client" ("id") ON DELETE CASCADE ON UPDATE CASCADE,
     CONSTRAINT "PortalAccess_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User" ("id") ON DELETE CASCADE ON UPDATE CASCADE
 );
+--> statement-breakpoint
 
 -- CreateTable
 CREATE TABLE "Deal" (
@@ -274,6 +290,7 @@ CREATE TABLE "Deal" (
     CONSTRAINT "Deal_workspaceId_fkey" FOREIGN KEY ("workspaceId") REFERENCES "Workspace" ("id") ON DELETE CASCADE ON UPDATE CASCADE,
     CONSTRAINT "Deal_clientId_fkey" FOREIGN KEY ("clientId") REFERENCES "Client" ("id") ON DELETE CASCADE ON UPDATE CASCADE
 );
+--> statement-breakpoint
 
 -- CreateTable
 CREATE TABLE "Activity" (
@@ -288,6 +305,7 @@ CREATE TABLE "Activity" (
     "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT "Activity_clientId_fkey" FOREIGN KEY ("clientId") REFERENCES "Client" ("id") ON DELETE CASCADE ON UPDATE CASCADE
 );
+--> statement-breakpoint
 
 -- CreateTable
 CREATE TABLE "Proposal" (
@@ -322,6 +340,7 @@ CREATE TABLE "Proposal" (
     CONSTRAINT "Proposal_clientId_fkey" FOREIGN KEY ("clientId") REFERENCES "Client" ("id") ON DELETE CASCADE ON UPDATE CASCADE,
     CONSTRAINT "Proposal_dealId_fkey" FOREIGN KEY ("dealId") REFERENCES "Deal" ("id") ON DELETE SET NULL ON UPDATE CASCADE
 );
+--> statement-breakpoint
 
 -- CreateTable
 CREATE TABLE "ProposalItem" (
@@ -337,6 +356,7 @@ CREATE TABLE "ProposalItem" (
     "sortOrder" INTEGER NOT NULL DEFAULT 0,
     CONSTRAINT "ProposalItem_proposalId_fkey" FOREIGN KEY ("proposalId") REFERENCES "Proposal" ("id") ON DELETE CASCADE ON UPDATE CASCADE
 );
+--> statement-breakpoint
 
 -- CreateTable
 CREATE TABLE "Contract" (
@@ -357,6 +377,7 @@ CREATE TABLE "Contract" (
     CONSTRAINT "Contract_clientId_fkey" FOREIGN KEY ("clientId") REFERENCES "Client" ("id") ON DELETE CASCADE ON UPDATE CASCADE,
     CONSTRAINT "Contract_proposalId_fkey" FOREIGN KEY ("proposalId") REFERENCES "Proposal" ("id") ON DELETE SET NULL ON UPDATE CASCADE
 );
+--> statement-breakpoint
 
 -- CreateTable
 CREATE TABLE "ContractSigner" (
@@ -376,6 +397,7 @@ CREATE TABLE "ContractSigner" (
     "hashAtSigning" TEXT,
     CONSTRAINT "ContractSigner_contractId_fkey" FOREIGN KEY ("contractId") REFERENCES "Contract" ("id") ON DELETE CASCADE ON UPDATE CASCADE
 );
+--> statement-breakpoint
 
 -- CreateTable
 CREATE TABLE "Invoice" (
@@ -412,6 +434,7 @@ CREATE TABLE "Invoice" (
     CONSTRAINT "Invoice_clientId_fkey" FOREIGN KEY ("clientId") REFERENCES "Client" ("id") ON DELETE CASCADE ON UPDATE CASCADE,
     CONSTRAINT "Invoice_recurringPlanId_fkey" FOREIGN KEY ("recurringPlanId") REFERENCES "RecurringPlan" ("id") ON DELETE SET NULL ON UPDATE CASCADE
 );
+--> statement-breakpoint
 
 -- CreateTable
 CREATE TABLE "InvoiceItem" (
@@ -423,6 +446,7 @@ CREATE TABLE "InvoiceItem" (
     "sortOrder" INTEGER NOT NULL DEFAULT 0,
     CONSTRAINT "InvoiceItem_invoiceId_fkey" FOREIGN KEY ("invoiceId") REFERENCES "Invoice" ("id") ON DELETE CASCADE ON UPDATE CASCADE
 );
+--> statement-breakpoint
 
 -- CreateTable
 CREATE TABLE "Payment" (
@@ -438,6 +462,7 @@ CREATE TABLE "Payment" (
     "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT "Payment_invoiceId_fkey" FOREIGN KEY ("invoiceId") REFERENCES "Invoice" ("id") ON DELETE CASCADE ON UPDATE CASCADE
 );
+--> statement-breakpoint
 
 -- CreateTable
 CREATE TABLE "RecurringPlan" (
@@ -456,6 +481,7 @@ CREATE TABLE "RecurringPlan" (
     "status" TEXT NOT NULL DEFAULT 'ACTIVE',
     "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
+--> statement-breakpoint
 
 -- CreateTable
 CREATE TABLE "Service" (
@@ -471,6 +497,7 @@ CREATE TABLE "Service" (
     "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT "Service_workspaceId_fkey" FOREIGN KEY ("workspaceId") REFERENCES "Workspace" ("id") ON DELETE CASCADE ON UPDATE CASCADE
 );
+--> statement-breakpoint
 
 -- CreateTable
 CREATE TABLE "Project" (
@@ -493,6 +520,7 @@ CREATE TABLE "Project" (
     CONSTRAINT "Project_workspaceId_fkey" FOREIGN KEY ("workspaceId") REFERENCES "Workspace" ("id") ON DELETE CASCADE ON UPDATE CASCADE,
     CONSTRAINT "Project_clientId_fkey" FOREIGN KEY ("clientId") REFERENCES "Client" ("id") ON DELETE CASCADE ON UPDATE CASCADE
 );
+--> statement-breakpoint
 
 -- CreateTable
 CREATE TABLE "Stage" (
@@ -503,6 +531,7 @@ CREATE TABLE "Stage" (
     "dueDate" DATETIME,
     CONSTRAINT "Stage_projectId_fkey" FOREIGN KEY ("projectId") REFERENCES "Project" ("id") ON DELETE CASCADE ON UPDATE CASCADE
 );
+--> statement-breakpoint
 
 -- CreateTable
 CREATE TABLE "Milestone" (
@@ -514,6 +543,7 @@ CREATE TABLE "Milestone" (
     "visibleToClient" BOOLEAN NOT NULL DEFAULT true,
     CONSTRAINT "Milestone_projectId_fkey" FOREIGN KEY ("projectId") REFERENCES "Project" ("id") ON DELETE CASCADE ON UPDATE CASCADE
 );
+--> statement-breakpoint
 
 -- CreateTable
 CREATE TABLE "Task" (
@@ -541,6 +571,7 @@ CREATE TABLE "Task" (
     CONSTRAINT "Task_stageId_fkey" FOREIGN KEY ("stageId") REFERENCES "Stage" ("id") ON DELETE SET NULL ON UPDATE CASCADE,
     CONSTRAINT "Task_parentId_fkey" FOREIGN KEY ("parentId") REFERENCES "Task" ("id") ON DELETE CASCADE ON UPDATE CASCADE
 );
+--> statement-breakpoint
 
 -- CreateTable
 CREATE TABLE "TaskComment" (
@@ -551,6 +582,7 @@ CREATE TABLE "TaskComment" (
     "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT "TaskComment_taskId_fkey" FOREIGN KEY ("taskId") REFERENCES "Task" ("id") ON DELETE CASCADE ON UPDATE CASCADE
 );
+--> statement-breakpoint
 
 -- CreateTable
 CREATE TABLE "TimeEntry" (
@@ -563,6 +595,7 @@ CREATE TABLE "TimeEntry" (
     "note" TEXT,
     CONSTRAINT "TimeEntry_taskId_fkey" FOREIGN KEY ("taskId") REFERENCES "Task" ("id") ON DELETE CASCADE ON UPDATE CASCADE
 );
+--> statement-breakpoint
 
 -- CreateTable
 CREATE TABLE "FileAsset" (
@@ -579,6 +612,7 @@ CREATE TABLE "FileAsset" (
     "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" DATETIME NOT NULL
 );
+--> statement-breakpoint
 
 -- CreateTable
 CREATE TABLE "FileVersion" (
@@ -592,6 +626,7 @@ CREATE TABLE "FileVersion" (
     "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT "FileVersion_fileId_fkey" FOREIGN KEY ("fileId") REFERENCES "FileAsset" ("id") ON DELETE CASCADE ON UPDATE CASCADE
 );
+--> statement-breakpoint
 
 -- CreateTable
 CREATE TABLE "Deliverable" (
@@ -610,6 +645,7 @@ CREATE TABLE "Deliverable" (
     "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT "Deliverable_projectId_fkey" FOREIGN KEY ("projectId") REFERENCES "Project" ("id") ON DELETE CASCADE ON UPDATE CASCADE
 );
+--> statement-breakpoint
 
 -- CreateTable
 CREATE TABLE "DeliverableReview" (
@@ -622,6 +658,7 @@ CREATE TABLE "DeliverableReview" (
     "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT "DeliverableReview_deliverableId_fkey" FOREIGN KEY ("deliverableId") REFERENCES "Deliverable" ("id") ON DELETE CASCADE ON UPDATE CASCADE
 );
+--> statement-breakpoint
 
 -- CreateTable
 CREATE TABLE "ChangeRequest" (
@@ -641,6 +678,7 @@ CREATE TABLE "ChangeRequest" (
     "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" DATETIME NOT NULL
 );
+--> statement-breakpoint
 
 -- CreateTable
 CREATE TABLE "Form" (
@@ -652,6 +690,7 @@ CREATE TABLE "Form" (
     "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" DATETIME NOT NULL
 );
+--> statement-breakpoint
 
 -- CreateTable
 CREATE TABLE "FormRequest" (
@@ -668,6 +707,7 @@ CREATE TABLE "FormRequest" (
     "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT "FormRequest_formId_fkey" FOREIGN KEY ("formId") REFERENCES "Form" ("id") ON DELETE CASCADE ON UPDATE CASCADE
 );
+--> statement-breakpoint
 
 -- CreateTable
 CREATE TABLE "Document" (
@@ -684,6 +724,7 @@ CREATE TABLE "Document" (
     "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" DATETIME NOT NULL
 );
+--> statement-breakpoint
 
 -- CreateTable
 CREATE TABLE "Meeting" (
@@ -706,6 +747,7 @@ CREATE TABLE "Meeting" (
     "createdById" TEXT,
     "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
+--> statement-breakpoint
 
 -- CreateTable
 CREATE TABLE "BookingLink" (
@@ -720,6 +762,7 @@ CREATE TABLE "BookingLink" (
     "isActive" BOOLEAN NOT NULL DEFAULT true,
     "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
+--> statement-breakpoint
 
 -- CreateTable
 CREATE TABLE "OnboardingRun" (
@@ -733,6 +776,7 @@ CREATE TABLE "OnboardingRun" (
     "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "completedAt" DATETIME
 );
+--> statement-breakpoint
 
 -- CreateTable
 CREATE TABLE "Message" (
@@ -747,6 +791,7 @@ CREATE TABLE "Message" (
     "readAt" DATETIME,
     "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
+--> statement-breakpoint
 
 -- CreateTable
 CREATE TABLE "Notification" (
@@ -760,6 +805,7 @@ CREATE TABLE "Notification" (
     "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT "Notification_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User" ("id") ON DELETE CASCADE ON UPDATE CASCADE
 );
+--> statement-breakpoint
 
 -- CreateTable
 CREATE TABLE "EmailLog" (
@@ -772,6 +818,7 @@ CREATE TABLE "EmailLog" (
     "error" TEXT,
     "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
+--> statement-breakpoint
 
 -- CreateTable
 CREATE TABLE "Template" (
@@ -785,6 +832,7 @@ CREATE TABLE "Template" (
     "updatedAt" DATETIME NOT NULL,
     CONSTRAINT "Template_workspaceId_fkey" FOREIGN KEY ("workspaceId") REFERENCES "Workspace" ("id") ON DELETE CASCADE ON UPDATE CASCADE
 );
+--> statement-breakpoint
 
 -- CreateTable
 CREATE TABLE "Automation" (
@@ -801,6 +849,7 @@ CREATE TABLE "Automation" (
     "updatedAt" DATETIME NOT NULL,
     CONSTRAINT "Automation_workspaceId_fkey" FOREIGN KEY ("workspaceId") REFERENCES "Workspace" ("id") ON DELETE CASCADE ON UPDATE CASCADE
 );
+--> statement-breakpoint
 
 -- CreateTable
 CREATE TABLE "AutomationRun" (
@@ -813,6 +862,7 @@ CREATE TABLE "AutomationRun" (
     "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT "AutomationRun_automationId_fkey" FOREIGN KEY ("automationId") REFERENCES "Automation" ("id") ON DELETE CASCADE ON UPDATE CASCADE
 );
+--> statement-breakpoint
 
 -- CreateTable
 CREATE TABLE "Ticket" (
@@ -829,6 +879,7 @@ CREATE TABLE "Ticket" (
     "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" DATETIME NOT NULL
 );
+--> statement-breakpoint
 
 -- CreateTable
 CREATE TABLE "TicketMessage" (
@@ -841,6 +892,7 @@ CREATE TABLE "TicketMessage" (
     "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT "TicketMessage_ticketId_fkey" FOREIGN KEY ("ticketId") REFERENCES "Ticket" ("id") ON DELETE CASCADE ON UPDATE CASCADE
 );
+--> statement-breakpoint
 
 -- CreateTable
 CREATE TABLE "Survey" (
@@ -853,6 +905,7 @@ CREATE TABLE "Survey" (
     "isActive" BOOLEAN NOT NULL DEFAULT true,
     "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
+--> statement-breakpoint
 
 -- CreateTable
 CREATE TABLE "SurveyResponse" (
@@ -868,6 +921,7 @@ CREATE TABLE "SurveyResponse" (
     "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT "SurveyResponse_surveyId_fkey" FOREIGN KEY ("surveyId") REFERENCES "Survey" ("id") ON DELETE CASCADE ON UPDATE CASCADE
 );
+--> statement-breakpoint
 
 -- CreateTable
 CREATE TABLE "Testimonial" (
@@ -883,6 +937,7 @@ CREATE TABLE "Testimonial" (
     "submittedAt" DATETIME,
     "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
+--> statement-breakpoint
 
 -- CreateTable
 CREATE TABLE "Referral" (
@@ -898,6 +953,7 @@ CREATE TABLE "Referral" (
     "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" DATETIME NOT NULL
 );
+--> statement-breakpoint
 
 -- CreateTable
 CREATE TABLE "Integration" (
@@ -910,6 +966,7 @@ CREATE TABLE "Integration" (
     "updatedAt" DATETIME NOT NULL,
     CONSTRAINT "Integration_workspaceId_fkey" FOREIGN KEY ("workspaceId") REFERENCES "Workspace" ("id") ON DELETE CASCADE ON UPDATE CASCADE
 );
+--> statement-breakpoint
 
 -- CreateTable
 CREATE TABLE "AiUsage" (
@@ -921,6 +978,7 @@ CREATE TABLE "AiUsage" (
     "outputTokens" INTEGER NOT NULL,
     "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
+--> statement-breakpoint
 
 -- CreateTable
 CREATE TABLE "AssistantMessage" (
@@ -933,6 +991,7 @@ CREATE TABLE "AssistantMessage" (
     "content" TEXT NOT NULL,
     "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
+--> statement-breakpoint
 
 -- CreateTable
 CREATE TABLE "AuditLog" (
@@ -946,189 +1005,251 @@ CREATE TABLE "AuditLog" (
     "ip" TEXT,
     "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
+--> statement-breakpoint
 
 -- CreateIndex
 CREATE UNIQUE INDEX "User_email_key" ON "User"("email");
+--> statement-breakpoint
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Session_tokenHash_key" ON "Session"("tokenHash");
+--> statement-breakpoint
 
 -- CreateIndex
 CREATE INDEX "Session_userId_idx" ON "Session"("userId");
+--> statement-breakpoint
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Token_tokenHash_key" ON "Token"("tokenHash");
+--> statement-breakpoint
 
 -- CreateIndex
 CREATE INDEX "Token_workspaceId_idx" ON "Token"("workspaceId");
+--> statement-breakpoint
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Plan_code_key" ON "Plan"("code");
+--> statement-breakpoint
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Subscription_workspaceId_key" ON "Subscription"("workspaceId");
+--> statement-breakpoint
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Subscription_stripeSubscriptionId_key" ON "Subscription"("stripeSubscriptionId");
+--> statement-breakpoint
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Coupon_code_key" ON "Coupon"("code");
+--> statement-breakpoint
 
 -- CreateIndex
 CREATE INDEX "PlatformPayment_workspaceId_idx" ON "PlatformPayment"("workspaceId");
+--> statement-breakpoint
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Workspace_slug_key" ON "Workspace"("slug");
+--> statement-breakpoint
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Workspace_icsToken_key" ON "Workspace"("icsToken");
+--> statement-breakpoint
 
 -- CreateIndex
 CREATE INDEX "Membership_workspaceId_idx" ON "Membership"("workspaceId");
+--> statement-breakpoint
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Membership_userId_workspaceId_key" ON "Membership"("userId", "workspaceId");
+--> statement-breakpoint
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Role_workspaceId_name_key" ON "Role"("workspaceId", "name");
+--> statement-breakpoint
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Department_workspaceId_name_key" ON "Department"("workspaceId", "name");
+--> statement-breakpoint
 
 -- CreateIndex
 CREATE INDEX "Client_workspaceId_status_idx" ON "Client"("workspaceId", "status");
+--> statement-breakpoint
 
 -- CreateIndex
 CREATE INDEX "Contact_workspaceId_idx" ON "Contact"("workspaceId");
+--> statement-breakpoint
 
 -- CreateIndex
 CREATE INDEX "PortalAccess_userId_idx" ON "PortalAccess"("userId");
+--> statement-breakpoint
 
 -- CreateIndex
 CREATE UNIQUE INDEX "PortalAccess_clientId_userId_key" ON "PortalAccess"("clientId", "userId");
+--> statement-breakpoint
 
 -- CreateIndex
 CREATE INDEX "Deal_workspaceId_stage_idx" ON "Deal"("workspaceId", "stage");
+--> statement-breakpoint
 
 -- CreateIndex
 CREATE INDEX "Activity_workspaceId_clientId_idx" ON "Activity"("workspaceId", "clientId");
+--> statement-breakpoint
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Proposal_publicToken_key" ON "Proposal"("publicToken");
+--> statement-breakpoint
 
 -- CreateIndex
 CREATE INDEX "Proposal_workspaceId_status_idx" ON "Proposal"("workspaceId", "status");
+--> statement-breakpoint
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Proposal_workspaceId_number_key" ON "Proposal"("workspaceId", "number");
+--> statement-breakpoint
 
 -- CreateIndex
 CREATE INDEX "Contract_workspaceId_status_idx" ON "Contract"("workspaceId", "status");
+--> statement-breakpoint
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Contract_workspaceId_number_key" ON "Contract"("workspaceId", "number");
+--> statement-breakpoint
 
 -- CreateIndex
 CREATE UNIQUE INDEX "ContractSigner_token_key" ON "ContractSigner"("token");
+--> statement-breakpoint
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Invoice_publicToken_key" ON "Invoice"("publicToken");
+--> statement-breakpoint
 
 -- CreateIndex
 CREATE INDEX "Invoice_workspaceId_status_idx" ON "Invoice"("workspaceId", "status");
+--> statement-breakpoint
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Invoice_workspaceId_number_key" ON "Invoice"("workspaceId", "number");
+--> statement-breakpoint
 
 -- CreateIndex
 CREATE INDEX "Payment_workspaceId_idx" ON "Payment"("workspaceId");
+--> statement-breakpoint
 
 -- CreateIndex
 CREATE INDEX "RecurringPlan_workspaceId_status_idx" ON "RecurringPlan"("workspaceId", "status");
+--> statement-breakpoint
 
 -- CreateIndex
 CREATE INDEX "Project_workspaceId_status_idx" ON "Project"("workspaceId", "status");
+--> statement-breakpoint
 
 -- CreateIndex
 CREATE INDEX "Task_workspaceId_assigneeId_idx" ON "Task"("workspaceId", "assigneeId");
+--> statement-breakpoint
 
 -- CreateIndex
 CREATE INDEX "Task_projectId_idx" ON "Task"("projectId");
+--> statement-breakpoint
 
 -- CreateIndex
 CREATE INDEX "TimeEntry_workspaceId_userId_idx" ON "TimeEntry"("workspaceId", "userId");
+--> statement-breakpoint
 
 -- CreateIndex
 CREATE INDEX "FileAsset_workspaceId_projectId_idx" ON "FileAsset"("workspaceId", "projectId");
+--> statement-breakpoint
 
 -- CreateIndex
 CREATE INDEX "FileAsset_workspaceId_clientId_idx" ON "FileAsset"("workspaceId", "clientId");
+--> statement-breakpoint
 
 -- CreateIndex
 CREATE INDEX "ChangeRequest_workspaceId_status_idx" ON "ChangeRequest"("workspaceId", "status");
+--> statement-breakpoint
 
 -- CreateIndex
 CREATE UNIQUE INDEX "FormRequest_token_key" ON "FormRequest"("token");
+--> statement-breakpoint
 
 -- CreateIndex
 CREATE INDEX "FormRequest_workspaceId_clientId_idx" ON "FormRequest"("workspaceId", "clientId");
+--> statement-breakpoint
 
 -- CreateIndex
 CREATE INDEX "Document_workspaceId_clientId_idx" ON "Document"("workspaceId", "clientId");
+--> statement-breakpoint
 
 -- CreateIndex
 CREATE INDEX "Meeting_workspaceId_startsAt_idx" ON "Meeting"("workspaceId", "startsAt");
+--> statement-breakpoint
 
 -- CreateIndex
 CREATE UNIQUE INDEX "BookingLink_slug_key" ON "BookingLink"("slug");
+--> statement-breakpoint
 
 -- CreateIndex
 CREATE INDEX "OnboardingRun_workspaceId_clientId_idx" ON "OnboardingRun"("workspaceId", "clientId");
+--> statement-breakpoint
 
 -- CreateIndex
 CREATE INDEX "Message_workspaceId_clientId_createdAt_idx" ON "Message"("workspaceId", "clientId", "createdAt");
+--> statement-breakpoint
 
 -- CreateIndex
 CREATE INDEX "Notification_userId_readAt_idx" ON "Notification"("userId", "readAt");
+--> statement-breakpoint
 
 -- CreateIndex
 CREATE INDEX "EmailLog_workspaceId_createdAt_idx" ON "EmailLog"("workspaceId", "createdAt");
+--> statement-breakpoint
 
 -- CreateIndex
 CREATE INDEX "Template_workspaceId_type_idx" ON "Template"("workspaceId", "type");
+--> statement-breakpoint
 
 -- CreateIndex
 CREATE INDEX "Automation_workspaceId_trigger_idx" ON "Automation"("workspaceId", "trigger");
+--> statement-breakpoint
 
 -- CreateIndex
 CREATE INDEX "AutomationRun_workspaceId_createdAt_idx" ON "AutomationRun"("workspaceId", "createdAt");
+--> statement-breakpoint
 
 -- CreateIndex
 CREATE INDEX "Ticket_workspaceId_status_idx" ON "Ticket"("workspaceId", "status");
+--> statement-breakpoint
 
 -- CreateIndex
 CREATE UNIQUE INDEX "SurveyResponse_token_key" ON "SurveyResponse"("token");
+--> statement-breakpoint
 
 -- CreateIndex
 CREATE INDEX "SurveyResponse_workspaceId_idx" ON "SurveyResponse"("workspaceId");
+--> statement-breakpoint
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Testimonial_token_key" ON "Testimonial"("token");
+--> statement-breakpoint
 
 -- CreateIndex
 CREATE INDEX "Testimonial_workspaceId_idx" ON "Testimonial"("workspaceId");
+--> statement-breakpoint
 
 -- CreateIndex
 CREATE INDEX "Referral_workspaceId_idx" ON "Referral"("workspaceId");
+--> statement-breakpoint
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Integration_workspaceId_provider_key" ON "Integration"("workspaceId", "provider");
+--> statement-breakpoint
 
 -- CreateIndex
 CREATE INDEX "AiUsage_workspaceId_createdAt_idx" ON "AiUsage"("workspaceId", "createdAt");
+--> statement-breakpoint
 
 -- CreateIndex
 CREATE INDEX "AssistantMessage_workspaceId_userId_scope_createdAt_idx" ON "AssistantMessage"("workspaceId", "userId", "scope", "createdAt");
+--> statement-breakpoint
 
 -- CreateIndex
 CREATE INDEX "AuditLog_workspaceId_createdAt_idx" ON "AuditLog"("workspaceId", "createdAt");

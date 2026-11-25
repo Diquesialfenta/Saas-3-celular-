@@ -34,7 +34,7 @@ Un independiente pasa a empresa desde **Configuración → Plan**. Es la misma c
 ## Arquitectura
 
 - **Next.js 16** (App Router, Server Actions, Turbopack), **React 19**, **TypeScript**, **Tailwind CSS 4**.
-- **Cloudflare D1** con **Prisma 6**. Esquema en `prisma/schema.prisma` y migraciones SQL en `prisma/d1/`.
+- **Cloudflare D1** con **Prisma 6**. Esquema en `prisma/schema.prisma` y migraciones SQL en `drizzle/`.
 - **Aislamiento entre cuentas**: toda entidad lleva `workspaceId`; las páginas y acciones obtienen el contexto con `requireWorkspace()` / `actionContext()` (`src/lib/tenant.ts`) y filtran siempre por él. Los permisos se comprueban en el servidor en cada acción.
 - **Sesiones** propias en base de datos (cookie `httpOnly`, token con hash SHA-256), contraseñas con bcrypt.
 - **Motor de eventos** en `src/lib/automations.ts`: los servicios emiten eventos y se ejecutan las automatizaciones de la cuenta, con registro de cada ejecución.
