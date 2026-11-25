@@ -1,3 +1,4 @@
+import { stringList } from "@/lib/string-list";
 import type { Plan } from "@prisma/client";
 import { APP_NAME } from "@/lib/config";
 
@@ -732,7 +733,7 @@ export function LandingBody({ plans }: { plans: Plan[] }) {
                     {`Probar ${p.name}`}
                   </a>
                   <ul className="plan__list">
-                    {p.features.slice(0, 4).map((x) => (
+                    {stringList(p.features).slice(0, 4).map((x) => (
                       <li key={x}>{x}</li>
                     ))}
                   </ul>

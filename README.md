@@ -29,16 +29,16 @@ Un independiente pasa a empresa desde **Configuración → Plan**. Es la misma c
 - **IA (Claude)**: redacción de propuestas, contratos, plantillas, briefs, planes de trabajo, informes y resúmenes de reunión; asistente del equipo y asistente del portal, cada uno limitado a los datos que su usuario puede ver. El consumo cuenta para los créditos del plan.
 - **Fidelización**: encuestas NPS, testimonios con moderación, programa de referidos (conversión a cliente), detección de renovaciones y ventas adicionales.
 - **Agenda**: calendario, enlaces públicos de reserva con disponibilidad y zona horaria, archivo `.ics` por reunión y suscripción ICS para Google Calendar, Outlook o Apple.
-- **Integraciones**: Stripe, SMTP propio, WhatsApp Business (API de Meta), sala de videollamadas, webhook firmado con HMAC y calendario. Las claves se guardan cifradas con AES-256-GCM.
+- **Integraciones**: Stripe, correo propio por HTTPS, WhatsApp Business (API de Meta), sala de videollamadas, webhook firmado con HMAC y calendario. Las claves se guardan cifradas con AES-256-GCM.
 
 ## Arquitectura
 
 - **Next.js 16** (App Router, Server Actions, Turbopack), **React 19**, **TypeScript**, **Tailwind CSS 4**.
-- **PostgreSQL** con **Prisma 6**. Esquema en `prisma/schema.prisma`.
+- **Cloudflare D1** con **Prisma 6**. Esquema en `prisma/schema.prisma` y migraciones SQL en `prisma/d1/`.
 - **Aislamiento entre cuentas**: toda entidad lleva `workspaceId`; las páginas y acciones obtienen el contexto con `requireWorkspace()` / `actionContext()` (`src/lib/tenant.ts`) y filtran siempre por él. Los permisos se comprueban en el servidor en cada acción.
 - **Sesiones** propias en base de datos (cookie `httpOnly`, token con hash SHA-256), contraseñas con bcrypt.
 - **Motor de eventos** en `src/lib/automations.ts`: los servicios emiten eventos y se ejecutan las automatizaciones de la cuenta, con registro de cada ejecución.
-- **Archivos** en disco local (`UPLOAD_DIR`) tras una interfaz sustituible por S3 (`src/lib/storage.ts`); descarga solo con permiso.
+- **Archivos** en R2 (`src/lib/storage.ts`), con descargas autorizadas dentro de la aplicación.
 - **Web pública** (`/`): construida con el kit de taste-skill (`public/assets`, `public/landing.css`) y servida como HTML estático desde `src/app/route.ts`, porque los scripts del kit modifican el DOM. Los precios salen de la base de datos.
 - **Interfaz del producto**: sistema propio en `src/components/ui.tsx` y `src/app/(app)/globals.css`, con los mismos tokens que la web y los criterios de movimiento de emil-design-eng.
 
@@ -60,52 +60,39 @@ prisma/                      esquema y semilla (planes y superadmin)
 
 ## Puesta en marcha
 
-Requisitos: Node 22+, PostgreSQL 14+.
+Requisitos: Node 22 o posterior y npm.
 
 ```bash
-npm install
-```
-
-```bash
-cp .env.example .env
-```
-
-Rellena `DATABASE_URL` y `APP_SECRET` (64 caracteres hex), y define `SUPERADMIN_EMAIL` y `SUPERADMIN_PASSWORD` para crear tu acceso de propietario.
-
-```bash
+npm ci
+cp .env.example .dev.vars
 npm run db:push
-```
-
-```bash
-npm run db:seed
-```
-
-```bash
 npm run dev
 ```
 
-La semilla solo crea los 4 planes y el superadministrador: no hay datos de ejemplo. Los planes y precios se editan desde `/admin/planes`.
+D1 y R2 son locales en desarrollo. Los cuatro planes se inicializan una sola vez y se administran desde `/admin/planes`. Para probar superadministración local, define `SUPERADMIN_EMAIL` y `SUPERADMIN_PASSWORD` en `.dev.vars` y ejecuta `node --env-file=.dev.vars --import tsx prisma/seed.ts`.
+
+### ChatGPT Sites
+
+Compila con `npm run build:sites`. El manifiesto declara D1 y R2 y el artefacto de publicación contiene también las migraciones. Configura `APP_SECRET` y `CRON_SECRET` como secretos en Sites y `APP_URL` con la URL publicada. Para crear el primer superadministrador de producción, abre `/configurar` con la sesión de ChatGPT del propietario configurado en `SITES_OWNER_EMAIL`. La página se cierra después de la activación.
 
 ## Servicios externos
 
-Todo funciona sin ellos y la interfaz explica qué falta; ninguna función muestra datos simulados.
-
 | Variable | Para qué |
 |---|---|
-| `ANTHROPIC_API_KEY` | Activa la IA (modelo `claude-opus-5-5`, configurable con `ANTHROPIC_MODEL`). |
-| `SMTP_URL`, `MAIL_FROM` | Correo de la plataforma. Cada cuenta puede conectar su propio SMTP. Sin correo, los envíos quedan registrados y los enlaces se pueden copiar. |
-| `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET` | Cobro de suscripciones de la plataforma. Webhook: `/api/stripe/platform`. Cada plan necesita sus `price_…` de Stripe. |
-| `CRON_SECRET` | Protege `/api/cron` (cobros recurrentes, caducidad de propuestas, recordatorios). Llamar cada hora con `Authorization: Bearer <CRON_SECRET>`. |
-| `UPLOAD_DIR` | Carpeta de archivos subidos. |
+| `ANTHROPIC_API_KEY`, `ANTHROPIC_MODEL` | Activa la IA. |
+| `RESEND_API_KEY`, `MAIL_FROM` | Correo de la plataforma mediante la API de Resend y un remitente verificado. |
+| `SMTP_URL`, `SMTP_RELAY_URL`, `SMTP_RELAY_TOKEN` | SMTP mediante un relay HTTPS de confianza. El relay recibe un POST Bearer con `{ operation, smtpUrl, message }` y devuelve 2xx si la operación se completa. Las cuentas con SMTP de Resend también pueden usar el transporte HTTPS de Resend. |
+| `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET` | Suscripciones de la plataforma. Webhook en `/api/stripe/platform` y precios de Stripe por plan. |
+| `CRON_SECRET` | Autoriza `/api/cron`. Un programador debe llamar cada hora con `Authorization: Bearer <CRON_SECRET>`; los Sites privados también requieren acceso de servicio de Sites. |
 
-Los cobros de cada cuenta a sus clientes usan la clave de Stripe que la cuenta conecta en **Integraciones**, con su webhook `/api/stripe/webhook/<workspaceId>`.
+Los cobros de cada cuenta usan la clave de Stripe de **Integraciones** y el webhook `/api/stripe/webhook/<workspaceId>`. En un despliegue privado, los enlaces para clientes, los webhooks y las suscripciones de calendario requieren que Sites admita al visitante o al servicio externo.
 
 ## Scripts
 
 | Comando | Qué hace |
 |---|---|
-| `npm run dev` | Desarrollo |
-| `npm run build` / `npm start` | Producción |
+| `npm run dev` | Desarrollo local |
+| `npm run build:sites` | Compila y prepara el Worker para Sites |
 | `npm run typecheck` | Comprobación de tipos |
-| `npm run db:push` | Aplica el esquema |
-| `npm run db:seed` | Planes y superadministrador |
+| `npm run db:push` | Aplica las migraciones de D1 en local |
+| `npm run db:seed` | Crea los planes y el superadministrador local si está configurado |

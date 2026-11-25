@@ -1,0 +1,10 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "encauza",
+  "main": ".open-next/worker.js",
+  "compatibility_date": "2026-10-06",
+  "compatibility_flags": ["nodejs_compat", "global_fetch_strictly_public"],
+  "assets": { "binding": "ASSETS", "directory": ".open-next/assets" },
+  "d1_databases": [{ "binding": "DB", "database_name": "encauza", "database_id": "local-encauza", "migrations_dir": "prisma/d1" }],
+  "r2_buckets": [{ "binding": "BUCKET", "bucket_name": "encauza" }]
+}

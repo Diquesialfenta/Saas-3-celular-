@@ -1,7 +1,7 @@
 "use server";
 
 import Stripe from "stripe";
-import nodemailer from "nodemailer";
+import { verifyMailTransport } from "@/lib/mail-transport";
 import { action, str, required, optStr } from "@/lib/action";
 import { actionContext } from "@/lib/tenant";
 import { removeIntegration, saveIntegration, type Provider } from "@/lib/integrations";
@@ -26,7 +26,7 @@ export const saveSmtpAction = action(async (fd) => {
   const url = required(fd, "url", "la dirección SMTP");
   const from = required(fd, "from", "el remitente");
   try {
-    await nodemailer.createTransport(url).verify();
+    await verifyMailTransport(url);
   } catch (e) {
     throw new Error(`No se pudo conectar al servidor SMTP: ${e instanceof Error ? e.message : "error"}`);
   }

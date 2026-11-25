@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Users, Search } from "lucide-react";
 import type { Prisma } from "@prisma/client";
+import { bindings } from "@/lib/bindings";
 import { db } from "@/lib/db";
 import { requireWorkspace } from "@/lib/tenant";
 import { relative } from "@/lib/format";
@@ -16,31 +17,41 @@ export default async function ClientsPage({ searchParams }: { searchParams: Prom
   const { q, estado } = await searchParams;
   const where: Prisma.ClientWhereInput = {
     workspaceId: ctx.workspaceId,
-    ...(estado ? { status: estado as Prisma.EnumClientStatusFilter["equals"] } : { status: { not: "ARCHIVED" } }),
-    ...(q
-      ? {
-          OR: [
-            { name: { contains: q, mode: "insensitive" } },
-            { email: { contains: q, mode: "insensitive" } },
-            { contacts: { some: { name: { contains: q, mode: "insensitive" } } } },
-            { tags: { has: q } },
-          ],
-        }
-      : {}),
+    status: estado ? estado as Prisma.EnumClientStatusFilter["equals"] : { not: "ARCHIVED" },
   };
-  const [clients, counts] = await Promise.all([
-    db.client.findMany({
-      where,
-      include: {
-        contacts: { where: { isPrimary: true }, take: 1 },
-        _count: { select: { projects: true, portalAccess: true } },
-        invoices: { where: { status: { in: ["SENT", "PARTIAL", "OVERDUE"] } }, select: { total: true, amountPaid: true, status: true } },
-      },
-      orderBy: { updatedAt: "desc" },
-      take: 200,
-    }),
+  const list = (filters: Prisma.ClientWhereInput) => db.client.findMany({
+    where: { ...where, ...filters },
+    include: {
+      contacts: { where: { isPrimary: true }, take: 1 },
+      _count: { select: { projects: true, portalAccess: true } },
+      invoices: { where: { status: { in: ["SENT", "PARTIAL", "OVERDUE"] } }, select: { total: true, amountPaid: true, status: true } },
+    },
+    orderBy: { updatedAt: "desc" },
+    take: 200,
+  });
+  const [clients, counts, tagMatches] = await Promise.all([
+    list(q ? { OR: [
+      { name: { contains: q } },
+      { email: { contains: q } },
+      { contacts: { some: { name: { contains: q } } } },
+    ] } : {}),
     db.client.groupBy({ by: ["status"], where: { workspaceId: ctx.workspaceId }, _count: true }),
+    q ? bindings().DB.prepare(`
+      SELECT "id" FROM "Client" WHERE "workspaceId" = ?
+        AND CASE WHEN ? IS NULL THEN "status" != 'ARCHIVED' ELSE "status" = ? END
+        AND EXISTS (SELECT 1 FROM json_each("tags") WHERE value = ?)
+      ORDER BY "updatedAt" DESC LIMIT 200
+    `).bind(ctx.workspaceId, estado ?? null, estado ?? null, q).all<{ id: string }>() : null,
   ]);
+  if (tagMatches?.results.length) {
+    const ids = tagMatches.results.map((row) => row.id);
+    const batches = [];
+    for (let start = 0; start < ids.length; start += 50) {
+      batches.push(list({ id: { in: ids.slice(start, start + 50) } }));
+    }
+    const byId = new Map([...clients, ...(await Promise.all(batches)).flat()].map((client) => [client.id, client]));
+    clients.splice(0, clients.length, ...[...byId.values()].sort((a, b) => b.updatedAt.getTime() - a.updatedAt.getTime()).slice(0, 200));
+  }
   const count = (s: string) => counts.find((c) => c.status === s)?._count ?? 0;
   const base = (s?: string) => `/app/clientes${s ? `?estado=${s}` : ""}`;
 

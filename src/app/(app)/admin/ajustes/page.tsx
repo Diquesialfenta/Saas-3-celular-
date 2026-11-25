@@ -1,3 +1,4 @@
+import { hasPlatformMail } from "@/lib/mail-transport";
 import { db } from "@/lib/db";
 import { isAiConfigured } from "@/lib/ai";
 import { appUrl } from "@/lib/config";
@@ -13,7 +14,7 @@ export default async function AdminSettings() {
     ["Base de datos", true],
     ["APP_SECRET (cifrado de claves)", !!process.env.APP_SECRET && process.env.APP_SECRET.length >= 32],
     ["IA (ANTHROPIC_API_KEY)", isAiConfigured()],
-    ["Correo de la plataforma (SMTP_URL)", !!process.env.SMTP_URL],
+    ["Correo de la plataforma", hasPlatformMail()],
     ["Cobro de suscripciones (STRIPE_SECRET_KEY)", !!process.env.STRIPE_SECRET_KEY],
     ["Webhook de Stripe (STRIPE_WEBHOOK_SECRET)", !!process.env.STRIPE_WEBHOOK_SECRET],
   ] as const;

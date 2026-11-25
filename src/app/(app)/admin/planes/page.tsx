@@ -1,3 +1,5 @@
+import { ensurePlanCatalog } from "@/lib/plan-catalog";
+import { stringList } from "@/lib/string-list";
 import type { Plan } from "@prisma/client";
 import { db } from "@/lib/db";
 import { money } from "@/lib/format";
@@ -8,6 +10,7 @@ import { savePlanAction } from "../actions";
 export const metadata = { title: "Planes y precios" };
 
 export default async function AdminPlans() {
+  await ensurePlanCatalog();
   const plans = await db.plan.findMany({ orderBy: { sortOrder: "asc" }, include: { _count: { select: { subscriptions: true } } } });
   return (
     <>
@@ -80,7 +83,7 @@ function PlanForm({ p }: { p?: Plan }) {
         <Input id="description" name="description" defaultValue={p?.description} required />
       </Field>
       <Field label="Beneficios (uno por línea)" htmlFor="features" className="sm:col-span-2">
-        <Textarea id="features" name="features" defaultValue={p?.features.join("\n")} />
+        <Textarea id="features" name="features" defaultValue={stringList(p?.features).join("\n")} />
       </Field>
       <fieldset className="sm:col-span-2 grid grid-cols-2 sm:grid-cols-5 gap-3">
         <legend className="text-[13px] font-medium text-ink-2 mb-2">Límites (vacío = ilimitado)</legend>

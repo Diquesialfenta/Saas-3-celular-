@@ -11,7 +11,7 @@ export default async function AdminUsers({ searchParams }: { searchParams: Promi
   const me = await requireSuperadmin();
   const { q } = await searchParams;
   const users = await db.user.findMany({
-    where: q ? { OR: [{ email: { contains: q, mode: "insensitive" } }, { name: { contains: q, mode: "insensitive" } }] } : {},
+    where: q ? { OR: [{ email: { contains: q } }, { name: { contains: q } }] } : {},
     include: { memberships: { include: { workspace: { select: { name: true } } } }, _count: { select: { portalAccess: true } } },
     orderBy: { createdAt: "desc" },
     take: 300,

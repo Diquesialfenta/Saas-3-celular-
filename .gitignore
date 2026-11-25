@@ -46,3 +46,10 @@ next-env.d.ts
 /shots
 /.taste-skill/index.html
 /.taste-skill/gate
+
+/.open-next/
+/.wrangler/
+/.sites-runtime/
+/dist/
+*.db
+*.db-journal

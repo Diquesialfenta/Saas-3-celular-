@@ -1,5 +1,6 @@
 "use server";
 
+import { stringList } from "@/lib/string-list";
 import type { Priority, TaskStatus, ProjectStatus } from "@prisma/client";
 import { db } from "@/lib/db";
 import { action, optStr, str, required, optDate, bool } from "@/lib/action";
@@ -417,7 +418,7 @@ export const generateDocumentAction = action(async (fd) => {
     `Proveedor: ${ctx.workspace.name}. Cliente: ${client.name} (${client.industry ?? "sector no indicado"}).`,
     `Proyecto: ${p.name}. Estado: ${p.status}. Inicio ${date(p.startDate)}, entrega ${date(p.dueDate)}.`,
     `Descripción: ${p.description ?? "-"}`,
-    `Objetivos: ${p.objectives.join("; ") || "-"}`,
+    `Objetivos: ${stringList(p.objectives).join("; ") || "-"}`,
     `Tareas:`,
     ...tasks.map((t) => `- [${t.status}] ${t.title}${t.dueDate ? ` (vence ${date(t.dueDate)})` : ""}${t.forClient ? " [pendiente del cliente]" : ""}`),
     `Hitos: ${milestones.map((m) => `${m.title} ${m.completedAt ? "(hecho)" : `(${date(m.dueDate)})`}`).join("; ") || "-"}`,

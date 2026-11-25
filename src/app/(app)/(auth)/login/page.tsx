@@ -10,7 +10,7 @@ export const metadata = { title: "Iniciar sesión" };
 
 export default async function LoginPage({ searchParams }: { searchParams: Promise<{ next?: string }> }) {
   const { next } = await searchParams;
-  if (await getCurrentUser()) redirect(next && next.startsWith("/") ? next : "/app");
+  if (await getCurrentUser()) redirect(next && next.startsWith("/") && !next.startsWith("//") && !next.includes("\\") ? next : "/app");
   return (
     <AuthShell title="Inicia sesión" description="Accede a tu cuenta o a tu portal de cliente." aside={<AuthAside />}>
       <ActionForm action={loginAction} className="grid gap-4">

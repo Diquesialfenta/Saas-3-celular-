@@ -3,11 +3,12 @@
 // (ver src/lib/tenant.ts). Los importes se guardan en céntimos (Int).
 
 generator client {
-  provider = "prisma-client-js"
+  provider   = "prisma-client-js"
+  engineType = "client"
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "sqlite"
   url      = env("DATABASE_URL")
 }
 
@@ -84,7 +85,7 @@ model Plan {
   priceMonthly        Int
   priceYearly         Int
   currency            String      @default("USD")
-  features            String[]
+  features            Json @default("[]")
   limits              Json // { clients, projects, members, storageMb, aiCredits }
   trialDays           Int         @default(14)
   isActive            Boolean     @default(true)
@@ -259,7 +260,7 @@ model Role {
   workspace   Workspace    @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
   name        String
   description String?
-  permissions String[]
+  permissions Json @default("[]")
   createdAt   DateTime     @default(now())
   members     Membership[]
 
@@ -302,7 +303,7 @@ model Client {
   address     String?
   status      ClientStatus @default(LEAD)
   source      String?
-  tags        String[]
+  tags        Json @default("[]")
   notes       String?
   ownerId     String?
   referredById String?
@@ -638,7 +639,7 @@ model Project {
   client          Client        @relation(fields: [clientId], references: [id], onDelete: Cascade)
   name            String
   description     String?
-  objectives      String[]
+  objectives      Json @default("[]")
   status          ProjectStatus @default(PLANNING)
   startDate       DateTime?
   dueDate         DateTime?

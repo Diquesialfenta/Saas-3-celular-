@@ -1,3 +1,4 @@
+import { stringList } from "@/lib/string-list";
 import { Check } from "lucide-react";
 import { db } from "@/lib/db";
 import { requireWorkspace } from "@/lib/tenant";
@@ -107,7 +108,7 @@ export default async function PlanPage({ searchParams }: { searchParams: Promise
               </p>
               <p className="text-[13px] text-muted">o {money(p.priceYearly, p.currency)} al año</p>
               <ul className="mt-4 grid gap-1.5 text-sm flex-1">
-                {p.features.map((f) => (
+                {stringList(p.features).map((f) => (
                   <li key={f} className="flex gap-2">
                     <Check className="size-4 shrink-0 mt-0.5 text-ok" /> {f}
                   </li>

@@ -1,3 +1,4 @@
+import { stringList } from "@/lib/string-list";
 import Link from "next/link";
 import { db } from "@/lib/db";
 import { requireWorkspace } from "@/lib/tenant";
@@ -217,7 +218,7 @@ export default async function TeamPage({ searchParams }: { searchParams: Promise
                   <span className="text-[12px] text-muted">{r._count.members} persona(s)</span>
                 </div>
                 {r.description && <p className="text-sm text-muted">{r.description}</p>}
-                <p className="text-[13px] text-muted mt-2">{r.permissions.map((p) => PERMISSIONS[p as keyof typeof PERMISSIONS]).filter(Boolean).join(" · ") || "Sin permisos"}</p>
+                <p className="text-[13px] text-muted mt-2">{stringList(r.permissions).map((p) => PERMISSIONS[p as keyof typeof PERMISSIONS]).filter(Boolean).join(" · ") || "Sin permisos"}</p>
                 <div className="mt-3 flex gap-2">
                   <Modal trigger="Editar" triggerVariant="secondary" triggerSize="sm" title={r.name} wide>
                     <RoleForm role={r} />
@@ -271,7 +272,7 @@ export default async function TeamPage({ searchParams }: { searchParams: Promise
   );
 }
 
-function RoleForm({ role }: { role?: { id: string; name: string; description: string | null; permissions: string[] } }) {
+function RoleForm({ role }: { role?: { id: string; name: string; description: string | null; permissions: unknown } }) {
   return (
     <ActionForm action={saveRoleAction} className="grid gap-4">
       {role && <input type="hidden" name="id" value={role.id} />}
@@ -286,7 +287,7 @@ function RoleForm({ role }: { role?: { id: string; name: string; description: st
       <fieldset className="grid sm:grid-cols-2 gap-2.5">
         <legend className="text-[13px] font-medium text-ink-2 mb-2">Permisos</legend>
         {Object.entries(PERMISSIONS).map(([k, v]) => (
-          <Checkbox key={k} name="permissions" value={k} defaultChecked={role?.permissions.includes(k)} label={v} />
+          <Checkbox key={k} name="permissions" value={k} defaultChecked={stringList(role?.permissions).includes(k)} label={v} />
         ))}
       </fieldset>
       <SubmitButton>Guardar rol</SubmitButton>

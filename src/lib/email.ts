@@ -1,5 +1,5 @@
 import "server-only";
-import nodemailer from "nodemailer";
+import { deliverMail, hasPlatformMail } from "./mail-transport";
 import { db } from "./db";
 import { getIntegration } from "./integrations";
 import { APP_NAME } from "./config";
@@ -36,15 +36,14 @@ export async function sendEmail(opts: { workspaceId?: string | null; to: string;
   const own = opts.workspaceId ? await getIntegration(opts.workspaceId, "SMTP") : null;
   const url = own?.url || process.env.SMTP_URL;
   const from = own?.from || process.env.MAIL_FROM || `${APP_NAME} <no-reply@localhost>`;
-  if (!url) {
+  if (!url && !hasPlatformMail()) {
     await db.emailLog.create({
       data: { workspaceId: opts.workspaceId ?? null, to: opts.to, subject: opts.subject, html: opts.html, status: "NOT_CONFIGURED" },
     });
     return { ok: false as const, reason: "NOT_CONFIGURED" };
   }
   try {
-    const transport = nodemailer.createTransport(url);
-    await transport.sendMail({ from, to: opts.to, subject: opts.subject, html: opts.html });
+    await deliverMail(url, { from, to: opts.to, subject: opts.subject, html: opts.html });
     await db.emailLog.create({
       data: { workspaceId: opts.workspaceId ?? null, to: opts.to, subject: opts.subject, html: opts.html, status: "SENT" },
     });

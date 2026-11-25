@@ -12,7 +12,7 @@ import { appUrl } from "@/lib/config";
  */
 export async function GET(req: Request) {
   const secret = process.env.CRON_SECRET || process.env.APP_SECRET;
-  if (req.headers.get("authorization") !== `Bearer ${secret}`) return new Response("No autorizado", { status: 401 });
+  if (!secret || req.headers.get("authorization") !== `Bearer ${secret}`) return new Response("No autorizado", { status: 401 });
   const created = await runRecurringPlans();
   const expired = await db.proposal.updateMany({ where: { status: { in: ["SENT", "VIEWED"] }, validUntil: { lt: new Date() } }, data: { status: "EXPIRED" } });
   const soon = await db.invoice.findMany({

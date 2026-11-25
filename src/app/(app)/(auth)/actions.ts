@@ -29,12 +29,19 @@ export const signupAction = action(async (fd) => {
     type: str(fd, "type"),
     plan: str(fd, "plan") || undefined,
   });
+  if (data.email === process.env.SITES_OWNER_EMAIL?.trim().toLowerCase() && !(await db.user.findFirst({ where: { isSuperadmin: true } }))) {
+    throw new Error("Este correo está reservado para la configuración inicial del administrador.");
+  }
   const exists = await db.user.findUnique({ where: { email: data.email } });
   if (exists) throw new Error("Ya existe una cuenta con ese correo. Inicia sesión.");
-  const user = await db.user.create({ data: { email: data.email, name: data.name, passwordHash: await hashPassword(data.password) } });
-  const ws = await createWorkspace({ userId: user.id, name: data.business, type: data.type, planCode: data.plan });
-  await createSession(user.id, ws.id);
-  await audit({ workspaceId: ws.id, userId: user.id, action: "workspace.created" });
+  const ws = await createWorkspace({
+    newUser: { email: data.email, name: data.name, passwordHash: await hashPassword(data.password) },
+    name: data.business,
+    type: data.type,
+    planCode: data.plan,
+  });
+  await createSession(ws.userId, ws.id);
+  await audit({ workspaceId: ws.id, userId: ws.userId, action: "workspace.created" });
   redirect("/app?bienvenida=1");
 });
 
@@ -58,7 +65,7 @@ export const loginAction = action(async (fd) => {
   if (user.isSuspended) throw new Error("Esta cuenta está suspendida. Contacta con soporte.");
   const membership = await db.membership.findFirst({ where: { userId: user.id }, orderBy: { createdAt: "asc" } });
   await createSession(user.id, membership?.workspaceId);
-  if (next.startsWith("/") && !next.startsWith("//")) redirect(next);
+  if (next.startsWith("/") && !next.startsWith("//") && !next.includes("\\")) redirect(next);
   if (membership) redirect("/app");
   const portal = await db.portalAccess.findFirst({ where: { userId: user.id, isActive: true } });
   if (portal) redirect("/portal");

@@ -1,3 +1,4 @@
+import { stringList } from "@/lib/string-list";
 import { Field, Input, Select, Textarea } from "@/components/ui";
 import { CLIENT_SOURCES } from "@/lib/constants";
 
@@ -13,7 +14,7 @@ type C = {
   address?: string | null;
   source?: string | null;
   notes?: string | null;
-  tags?: string[];
+  tags?: unknown;
   status?: string;
 };
 
@@ -69,7 +70,7 @@ export function ClientFields({ c = {}, full = false }: { c?: C; full?: boolean }
         <Input id="website" name="website" defaultValue={c.website ?? ""} />
       </Field>
       <Field label="Etiquetas" htmlFor="tags" hint="Separadas por comas">
-        <Input id="tags" name="tags" defaultValue={c.tags?.join(", ")} />
+        <Input id="tags" name="tags" defaultValue={stringList(c.tags).join(", ")} />
       </Field>
       {full && (
         <>

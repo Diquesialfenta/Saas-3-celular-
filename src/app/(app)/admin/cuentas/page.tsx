@@ -8,7 +8,7 @@ export const metadata = { title: "Cuentas" };
 export default async function AdminAccounts({ searchParams }: { searchParams: Promise<{ q?: string }> }) {
   const { q } = await searchParams;
   const workspaces = await db.workspace.findMany({
-    where: q ? { OR: [{ name: { contains: q, mode: "insensitive" } }, { slug: { contains: q, mode: "insensitive" } }, { memberships: { some: { user: { email: { contains: q, mode: "insensitive" } } } } }] } : {},
+    where: q ? { OR: [{ name: { contains: q } }, { slug: { contains: q } }, { memberships: { some: { user: { email: { contains: q } } } } }] } : {},
     include: { subscription: { include: { plan: true } }, _count: { select: { clients: true, projects: true, memberships: true } } },
     orderBy: { createdAt: "desc" },
     take: 300,

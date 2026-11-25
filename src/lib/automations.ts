@@ -1,3 +1,4 @@
+import { stringList } from "@/lib/string-list";
 import "server-only";
 import { db } from "./db";
 
@@ -95,7 +96,7 @@ async function matches(workspaceId: string, c: Conditions | null, p: EventPayloa
   if (!c) return true;
   if (c.clientTag && p.clientId) {
     const client = await db.client.findFirst({ where: { id: p.clientId, workspaceId } });
-    if (!client?.tags.includes(c.clientTag)) return false;
+    if (!stringList(client?.tags).includes(c.clientTag)) return false;
   }
   if (c.minAmount && p.invoiceId) {
     const inv = await db.invoice.findFirst({ where: { id: p.invoiceId, workspaceId } });

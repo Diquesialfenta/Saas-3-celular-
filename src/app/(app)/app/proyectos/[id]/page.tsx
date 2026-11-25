@@ -1,3 +1,4 @@
+import { stringList } from "@/lib/string-list";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { db } from "@/lib/db";
@@ -124,7 +125,7 @@ export default async function ProjectPage({ params, searchParams }: { params: Pr
                     <Textarea id="e-desc" name="description" defaultValue={project.description ?? ""} />
                   </Field>
                   <Field label="Objetivos (uno por línea)" htmlFor="e-obj" className="sm:col-span-2">
-                    <Textarea id="e-obj" name="objectives" defaultValue={project.objectives.join("\n")} />
+                    <Textarea id="e-obj" name="objectives" defaultValue={stringList(project.objectives).join("\n")} />
                   </Field>
                   <Checkbox name="visibleToClient" defaultChecked={project.visibleToClient} label="Visible en el portal del cliente" className="sm:col-span-2" />
                   <div className="sm:col-span-2 flex justify-end">
@@ -151,7 +152,7 @@ export default async function ProjectPage({ params, searchParams }: { params: Pr
             </span>
           </div>
           <Progress value={pct} />
-          {project.objectives.length > 0 && <p className="text-[13px] text-muted mt-3 truncate">Objetivos: {project.objectives.join(" · ")}</p>}
+          {stringList(project.objectives).length > 0 && <p className="text-[13px] text-muted mt-3 truncate">Objetivos: {stringList(project.objectives).join(" · ")}</p>}
         </Card>
         <Card className="p-4">
           <p className="text-[13px] text-muted">Responsable</p>

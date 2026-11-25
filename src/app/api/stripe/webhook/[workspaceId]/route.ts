@@ -15,7 +15,7 @@ export async function POST(req: Request, { params }: { params: Promise<{ workspa
   const body = await req.text();
   let event: Stripe.Event;
   try {
-    event = stripe.webhooks.constructEvent(body, req.headers.get("stripe-signature") ?? "", cfg.webhookSecret);
+    event = await stripe.webhooks.constructEventAsync(body, req.headers.get("stripe-signature") ?? "", cfg.webhookSecret);
   } catch {
     return new Response("Firma no válida", { status: 400 });
   }

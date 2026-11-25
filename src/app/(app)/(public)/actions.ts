@@ -3,6 +3,7 @@
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import Stripe from "stripe";
+import { bindings } from "@/lib/bindings";
 import { db } from "@/lib/db";
 import { action, optStr, str, required } from "@/lib/action";
 import { clientIp } from "@/lib/auth";
@@ -30,13 +31,21 @@ export const acceptProposalAction = action(async (fd) => {
   if (str(fd, "agree") !== "on") throw new Error("Marca la casilla para confirmar la aceptación.");
   const selected = new Set(fd.getAll("optional").map(String));
   const h = await headers();
-  await db.$transaction([
-    ...p.items.filter((i) => i.isOptional).map((i) => db.proposalItem.update({ where: { id: i.id }, data: { isSelected: selected.has(i.id) } })),
-    db.proposal.update({
-      where: { id: p.id },
-      data: { status: "ACCEPTED", acceptedAt: new Date(), acceptedByName: name, acceptedByEmail: email, acceptedIp: clientIp(h) },
-    }),
+  const { DB } = bindings();
+  const now = new Date().toISOString();
+  const [, accepted] = await DB.batch([
+    DB.prepare(`
+      UPDATE "ProposalItem" SET "isSelected" = "id" IN (SELECT value FROM json_each(?))
+      WHERE "proposalId" = ? AND "isOptional" = 1
+        AND EXISTS (SELECT 1 FROM "Proposal" WHERE "id" = ? AND "status" NOT IN ('ACCEPTED', 'DECLINED'))
+    `).bind(JSON.stringify([...selected]), p.id, p.id),
+    DB.prepare(`
+      UPDATE "Proposal" SET "status" = 'ACCEPTED', "acceptedAt" = ?, "acceptedByName" = ?,
+        "acceptedByEmail" = ?, "acceptedIp" = ?, "updatedAt" = ?
+      WHERE "id" = ? AND "status" NOT IN ('ACCEPTED', 'DECLINED')
+    `).bind(now, name, email, clientIp(h), now, p.id),
   ]);
+  if (!accepted.meta.changes) return "La propuesta ya fue respondida.";
   if (p.dealId) await db.deal.update({ where: { id: p.dealId }, data: { stage: "WON", status: "WON", probability: 100, closedAt: new Date() } });
   await db.client.update({ where: { id: p.clientId }, data: { status: "ACTIVE" } });
   await activity({ workspaceId: p.workspaceId, clientId: p.clientId, content: `${name} aceptó la propuesta ${p.number}` });
@@ -112,7 +121,7 @@ export const submitFormAction = action(async (fd) => {
   await activity({ workspaceId: req.workspaceId, clientId: req.clientId, content: `Formulario "${req.form.name}" completado` });
   await notifyTeam(req.workspaceId, { title: `Formulario "${req.form.name}" recibido`, link: `/app/clientes/${req.clientId}` });
   if (req.projectId) {
-    await db.task.updateMany({ where: { projectId: req.projectId, forClient: true, title: { contains: "formulario", mode: "insensitive" }, status: { not: "DONE" } }, data: { status: "DONE", completedAt: new Date() } });
+    await db.task.updateMany({ where: { projectId: req.projectId, forClient: true, title: { contains: "formulario" }, status: { not: "DONE" } }, data: { status: "DONE", completedAt: new Date() } });
   }
   await emit(req.workspaceId, "form.submitted", { clientId: req.clientId, formRequestId: req.id, projectId: req.projectId ?? undefined });
   return "Formulario enviado. ¡Gracias!";

@@ -1,3 +1,4 @@
+import { ensurePlanCatalog } from "@/lib/plan-catalog";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { db } from "@/lib/db";
@@ -11,6 +12,7 @@ export const metadata = { title: "Crear cuenta" };
 export default async function SignupPage({ searchParams }: { searchParams: Promise<{ tipo?: string; plan?: string }> }) {
   if (await getCurrentUser()) redirect("/app");
   const { tipo, plan } = await searchParams;
+  await ensurePlanCatalog();
   const plans = await db.plan.findMany({ where: { isActive: true, isPublic: true }, orderBy: { sortOrder: "asc" } });
   return (
     <AuthShell title="Crea tu cuenta" description="Elige si trabajas por tu cuenta o con un equipo. Podrás pasar de independiente a empresa sin perder nada." aside={<AuthAside />}>

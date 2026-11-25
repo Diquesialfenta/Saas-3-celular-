@@ -3,6 +3,7 @@ import { db } from "@/lib/db";
 import { requireWorkspace } from "@/lib/tenant";
 import { getIntegration, mask } from "@/lib/integrations";
 import { appUrl } from "@/lib/config";
+import { hasPlatformMail } from "@/lib/mail-transport";
 import { isAiConfigured } from "@/lib/ai";
 import { relative } from "@/lib/format";
 import { ActionButton, ActionForm, CopyButton, Modal, SubmitButton } from "@/components/forms";
@@ -22,7 +23,7 @@ export default async function IntegrationsPage() {
     getIntegration(ws, "VIDEO"),
     db.emailLog.findMany({ where: { workspaceId: ws }, orderBy: { createdAt: "desc" }, take: 12 }),
   ]);
-  const platformMail = !!process.env.SMTP_URL;
+  const platformMail = hasPlatformMail();
   const Status = ({ on, label }: { on: boolean; label?: string }) => <Badge tone={on ? "ok" : "neutral"}>{on ? (label ?? "Conectado") : "No conectado"}</Badge>;
   const Disconnect = ({ provider }: { provider: string }) => (
     <ActionButton action={removeIntegrationAction} fields={{ provider }} variant="ghost" confirm="¿Desconectar esta integración?">
@@ -69,7 +70,7 @@ export default async function IntegrationsPage() {
             <div className="flex gap-2">
               <Modal trigger={smtp ? "Cambiar" : "Conectar correo"} triggerVariant={smtp ? "secondary" : "primary"} triggerSize="sm" title="Conectar correo SMTP">
                 <ActionForm action={saveSmtpAction} className="grid gap-4">
-                  <Field label="Dirección SMTP" htmlFor="smtp" hint="smtp://usuario:contraseña@servidor:587 (Gmail, Outlook, Zoho, Amazon SES, Resend…)">
+                  <Field label="Dirección SMTP" htmlFor="smtp" hint="Usa la dirección SMTP de Resend o un servidor SMTP a través del relay configurado por el administrador.">
                     <Input id="smtp" name="url" type="password" autoComplete="off" required />
                   </Field>
                   <Field label="Remitente" htmlFor="from">

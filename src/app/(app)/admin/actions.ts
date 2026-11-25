@@ -1,5 +1,6 @@
 "use server";
 
+import { updateWorkspaceSubscription } from "@/lib/services/workspace";
 import { db } from "@/lib/db";
 import { action, optStr, str, required, bool, optDate } from "@/lib/action";
 import { requireSuperadmin, getSession } from "@/lib/auth";
@@ -27,13 +28,14 @@ export const updateSubscriptionAction = action(async (fd) => {
   const plan = await db.plan.findUniqueOrThrow({ where: { id: str(fd, "planId") } });
   const status = str(fd, "status");
   if (!["TRIALING", "ACTIVE", "PAST_DUE", "CANCELED"].includes(status)) throw new Error("Estado no válido");
-  await db.$transaction([
-    db.workspace.update({ where: { id: ws.id }, data: { type: plan.accountType, upgradedAt: plan.accountType !== ws.type ? new Date() : ws.upgradedAt } }),
-    db.subscription.update({
-      where: { workspaceId: ws.id },
-      data: { planId: plan.id, status: status as "TRIALING" | "ACTIVE" | "PAST_DUE" | "CANCELED", trialEndsAt: optDate(fd, "trialEndsAt"), currentPeriodEnd: optDate(fd, "currentPeriodEnd") },
-    }),
-  ]);
+  await updateWorkspaceSubscription(ws.id, {
+    planId: plan.id,
+    type: plan.accountType,
+    upgradedAt: plan.accountType !== ws.type ? new Date() : ws.upgradedAt,
+    status,
+    trialEndsAt: optDate(fd, "trialEndsAt"),
+    currentPeriodEnd: optDate(fd, "currentPeriodEnd"),
+  });
   await audit({ workspaceId: ws.id, userId: u.id, action: "admin.subscription", meta: { planId: plan.id, status } });
   return "Suscripción actualizada";
 }, "/admin");

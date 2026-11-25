@@ -1,3 +1,4 @@
+import { stringList } from "@/lib/string-list";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Mail, Phone, Globe, Sparkles, Trash2, ExternalLink } from "lucide-react";
@@ -323,7 +324,7 @@ export default async function ClientPage({ params }: { params: Promise<{ id: str
                   { label: "Tipo", value: client.kind === "PERSON" ? "Persona" : "Empresa" },
                   { label: "Documento", value: client.taxId },
                   { label: "Dirección", value: client.address },
-                  { label: "Etiquetas", value: client.tags.length ? <span className="flex flex-wrap gap-1">{client.tags.map((t) => <Badge key={t}>{t}</Badge>)}</span> : null },
+                  { label: "Etiquetas", value: stringList(client.tags).length ? <span className="flex flex-wrap gap-1">{stringList(client.tags).map((t) => <Badge key={t}>{t}</Badge>)}</span> : null },
                 ]}
               />
               {client.notes && <p className="text-sm text-muted whitespace-pre-wrap border-t border-line pt-3">{client.notes}</p>}

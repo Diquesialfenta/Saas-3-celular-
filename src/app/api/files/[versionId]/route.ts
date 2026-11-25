@@ -18,11 +18,12 @@ export async function GET(_req: Request, { params }: { params: Promise<{ version
   }
   if (!allowed) return new Response("No autorizado", { status: 403 });
   const data = await getFile(version.storageKey);
-  const inline = /^(image\/|application\/pdf|video\/|audio\/|text\/plain)/.test(f.mimeType);
-  return new Response(new Uint8Array(data), {
+  if (!data) return new Response("No encontrado", { status: 404 });
+  const inline = /^(image\/(?:png|jpeg|gif|webp|avif)|application\/pdf|video\/[\w.+-]+|audio\/[\w.+-]+|text\/plain)$/.test(f.mimeType);
+  return new Response(data.body, {
     headers: {
-      "Content-Type": f.mimeType,
-      "Content-Length": String(data.length),
+      "Content-Type": inline ? f.mimeType : "application/octet-stream",
+      "Content-Length": String(data.size),
       "Content-Disposition": `${inline ? "inline" : "attachment"}; filename*=UTF-8''${encodeURIComponent(f.name)}`,
       "Cache-Control": "private, max-age=0",
       "X-Content-Type-Options": "nosniff",
