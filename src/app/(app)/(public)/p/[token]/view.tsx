@@ -26,6 +26,7 @@ export function ProposalView(p: {
 }) {
   const [selected, setSelected] = useState(() => new Set(p.items.filter((i) => i.isOptional && i.isSelected).map((i) => i.id)));
   const [mode, setMode] = useState<"idle" | "accept" | "decline" | "done">(p.status === "ACCEPTED" || p.status === "DECLINED" ? "done" : "idle");
+  const [result, setResult] = useState<"ACCEPTED" | "DECLINED" | null>(p.status === "ACCEPTED" || p.status === "DECLINED" ? (p.status as "ACCEPTED" | "DECLINED") : null);
   const fmt = (c: number) => new Intl.NumberFormat("es", { style: "currency", currency: p.currency }).format(c / 100);
   const included = p.items.filter((i) => !i.isOptional || selected.has(i.id));
   const subtotal = Math.round(included.reduce((s, i) => s + i.quantity * i.unitPrice, 0));
@@ -33,6 +34,7 @@ export function ProposalView(p: {
   const tax = Math.round((base * p.taxRate) / 100);
   const total = base + tax;
   const recurring = included.filter((i) => i.recurring !== "NONE");
+  const final = result ?? (p.status === "ACCEPTED" || p.status === "DECLINED" ? p.status : null);
   const open = p.status === "SENT" || p.status === "VIEWED";
   const per = (r: string) => (r === "MONTHLY" ? "/mes" : r === "YEARLY" ? "/año" : "");
 
@@ -115,9 +117,9 @@ export function ProposalView(p: {
       </ul>
 
       <div className="mt-8">
-        {mode === "done" ? (
-          <Card className={cx("p-6", p.status === "ACCEPTED" ? "bg-ok-bg border-ok/20" : "")}>
-            {p.status === "ACCEPTED" || p.acceptedBy ? (
+        {final || mode === "done" ? (
+          <Card className={cx("p-6", final === "ACCEPTED" ? "bg-ok-bg border-ok/20" : "")}>
+            {final === "ACCEPTED" ? (
               <p className="text-ok font-medium">
                 Propuesta aceptada{p.acceptedBy ? ` por ${p.acceptedBy}` : ""}
                 {p.acceptedAt ? ` el ${new Date(p.acceptedAt).toLocaleDateString("es", { dateStyle: "long" })}` : ""}. Recibirás el contrato y los siguientes pasos por correo.
@@ -140,7 +142,14 @@ export function ProposalView(p: {
         ) : mode === "accept" ? (
           <Card className="pop p-6">
             <h3 className="text-lg">Aceptar la propuesta</h3>
-            <ActionForm action={p.accept} className="mt-4 grid gap-4" onDone={() => setMode("done")}>
+            <ActionForm
+              action={p.accept}
+              className="mt-4 grid gap-4"
+              onDone={() => {
+                setResult("ACCEPTED");
+                setMode("done");
+              }}
+            >
               <input type="hidden" name="token" value={p.token} />
               {[...selected].map((id) => (
                 <input key={id} type="hidden" name="optional" value={id} />
@@ -170,7 +179,14 @@ export function ProposalView(p: {
         ) : (
           <Card className="pop p-6">
             <h3 className="text-lg">¿Qué no encaja?</h3>
-            <ActionForm action={p.decline} className="mt-4 grid gap-4" onDone={() => setMode("done")}>
+            <ActionForm
+              action={p.decline}
+              className="mt-4 grid gap-4"
+              onDone={() => {
+                setResult("DECLINED");
+                setMode("done");
+              }}
+            >
               <input type="hidden" name="token" value={p.token} />
               <Field label="Motivo (opcional)" htmlFor="reason">
                 <Textarea id="reason" name="reason" placeholder="Precio, plazos, alcance…" />

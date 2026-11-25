@@ -102,7 +102,7 @@ export function AppShell(p: Props) {
           <span className="block truncate text-sm font-medium">{p.workspace.name}</span>
           <span className="block truncate text-[12px] text-muted">
             {p.workspace.type === "COMPANY" ? "Empresa" : "Independiente"}
-            {p.workspace.planName ? ` · ${p.workspace.planName}` : ""}
+            {p.workspace.planName ? ` · plan ${p.workspace.planName}` : ""}
           </span>
         </span>
         <ChevronsUpDown className="size-4 text-faint" />

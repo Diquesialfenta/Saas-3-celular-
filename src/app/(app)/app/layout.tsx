@@ -2,18 +2,21 @@ import { db } from "@/lib/db";
 import { requireWorkspace } from "@/lib/tenant";
 import { isAiConfigured } from "@/lib/ai";
 import { AssistantChat } from "@/components/assistant";
+import { Notice } from "@/components/ui";
 import { logoutAction } from "../(auth)/actions";
 import { AppShell, type NavGroup } from "./shell";
 import { askTeamAssistant, readNotificationsAction, switchWorkspaceAction } from "./actions";
 
 export default async function AppLayout({ children }: { children: React.ReactNode }) {
   const ctx = await requireWorkspace();
-  const [notifications, openTickets, unreadMessages, history] = await Promise.all([
+  const [notifications, openTickets, unreadMessages, history, announcement] = await Promise.all([
     db.notification.findMany({ where: { userId: ctx.user.id }, orderBy: { createdAt: "desc" }, take: 20 }),
     ctx.can("support.manage") ? db.ticket.count({ where: { workspaceId: ctx.workspaceId, status: "OPEN" } }) : 0,
     db.message.count({ where: { workspaceId: ctx.workspaceId, authorType: "CLIENT", readAt: null } }),
     db.assistantMessage.findMany({ where: { workspaceId: ctx.workspaceId, userId: ctx.user.id, scope: "TEAM" }, orderBy: { createdAt: "desc" }, take: 20 }),
+    db.platformSetting.findUnique({ where: { key: "announcement" } }),
   ]);
+  const announcementText = (announcement?.value as { text?: string | null } | null)?.text;
   const c = ctx.can;
   const raw: NavGroup[] = [
     {
@@ -52,6 +55,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
         ...(c("analytics.view") ? [{ href: "/app/analitica", label: "Analítica", icon: "BarChart3" }] : []),
         ...(c("settings.manage") ? [{ href: "/app/integraciones", label: "Integraciones", icon: "Plug" }] : []),
         ...(c("settings.manage") ? [{ href: "/app/configuracion", label: "Configuración", icon: "Settings" }] : []),
+        { href: "/app/ayuda", label: "Ayuda", icon: "LifeBuoy" },
       ],
     },
   ];
@@ -81,6 +85,11 @@ export default async function AppLayout({ children }: { children: React.ReactNod
         />
       }
     >
+      {announcementText && (
+        <div className="mb-5">
+          <Notice tone="info">{announcementText}</Notice>
+        </div>
+      )}
       {children}
     </AppShell>
   );

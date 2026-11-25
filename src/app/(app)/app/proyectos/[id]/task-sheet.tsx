@@ -88,13 +88,15 @@ export async function TaskSheet({
         </Field>
         <Checkbox name="forClient" defaultChecked={t.forClient} label="Es una tarea pendiente del cliente (aparece en su portal)" />
         <Checkbox name="visibleToClient" defaultChecked={t.visibleToClient} label="Visible en el cronograma del portal" />
-        <div className="flex justify-between gap-2">
-          <ActionButton action={deleteTaskAction} fields={{ id: t.id }} variant="danger" confirm="¿Eliminar esta tarea y sus subtareas?">
-            Eliminar
-          </ActionButton>
+        <div className="flex justify-end gap-2">
           <SubmitButton>Guardar</SubmitButton>
         </div>
       </ActionForm>
+      <div className="mt-3">
+        <ActionButton action={deleteTaskAction} fields={{ id: t.id }} variant="danger" confirm="¿Eliminar esta tarea y sus subtareas?">
+          Eliminar tarea
+        </ActionButton>
+      </div>
 
       {!t.parentId && (
         <section className="mt-8">

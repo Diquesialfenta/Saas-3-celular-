@@ -127,13 +127,15 @@ export default async function ProjectPage({ params, searchParams }: { params: Pr
                     <Textarea id="e-obj" name="objectives" defaultValue={project.objectives.join("\n")} />
                   </Field>
                   <Checkbox name="visibleToClient" defaultChecked={project.visibleToClient} label="Visible en el portal del cliente" className="sm:col-span-2" />
-                  <div className="sm:col-span-2 flex justify-between">
-                    <ActionButton action={deleteProjectAction} fields={{ id: project.id }} variant="danger" confirm="¿Eliminar el proyecto con todas sus tareas, entregables y archivos?">
-                      Eliminar proyecto
-                    </ActionButton>
+                  <div className="sm:col-span-2 flex justify-end">
                     <SubmitButton>Guardar</SubmitButton>
                   </div>
                 </ActionForm>
+                <div className="mt-6 border-t border-line pt-4">
+                  <ActionButton action={deleteProjectAction} fields={{ id: project.id }} variant="danger" confirm="¿Eliminar el proyecto con todas sus tareas, entregables y archivos?">
+                    Eliminar proyecto
+                  </ActionButton>
+                </div>
               </Modal>
             )}
           </>

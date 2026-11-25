@@ -29,6 +29,11 @@ export async function createProject(input: {
   const lastOffset = tpl
     ? Math.max(0, ...tpl.stages.flatMap((s) => s.tasks.map((t) => t.offsetDays ?? 0)), ...tpl.milestones.map((m) => m.offsetDays))
     : 0;
+  const managerId =
+    input.managerId ??
+    input.createdById ??
+    (await db.membership.findFirst({ where: { workspaceId: input.workspaceId, role: "OWNER" }, select: { userId: true } }))?.userId ??
+    null;
   const project = await db.project.create({
     data: {
       workspaceId: input.workspaceId,
@@ -40,7 +45,7 @@ export async function createProject(input: {
       startDate: start,
       dueDate: input.dueDate ?? (tpl && lastOffset ? addDays(start, lastOffset) : null),
       budget: input.budget ?? null,
-      managerId: input.managerId ?? input.createdById ?? null,
+      managerId,
       contractId: input.contractId ?? null,
     },
   });
@@ -58,7 +63,7 @@ export async function createProject(input: {
           visibleToClient: !!t.forClient,
           dueDate: addDays(start, t.offsetDays ?? 0),
           sortOrder: ti,
-          assigneeId: t.forClient ? null : (input.managerId ?? input.createdById ?? null),
+          assigneeId: t.forClient ? null : managerId,
           createdById: input.createdById ?? null,
         })),
       });

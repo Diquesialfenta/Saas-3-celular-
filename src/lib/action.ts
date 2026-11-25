@@ -1,6 +1,6 @@
 import "server-only";
 import { unstable_rethrow } from "next/navigation";
-import { revalidatePath } from "next/cache";
+import { refresh, revalidatePath } from "next/cache";
 import { ZodError } from "zod";
 
 export type ActionState = { ok?: boolean; message?: string; error?: string; data?: Record<string, unknown>; at?: number } | null;
@@ -14,6 +14,7 @@ export function action(fn: (fd: FormData) => Promise<string | void | { message?:
     try {
       const r = await fn(fd);
       for (const p of Array.isArray(revalidate) ? revalidate : [revalidate]) revalidatePath(p, "layout");
+      refresh();
       if (typeof r === "string") return { ok: true, message: r, at: Date.now() };
       if (r && typeof r === "object") return { ok: true, message: r.message, data: r.data, at: Date.now() };
       return { ok: true, at: Date.now() };

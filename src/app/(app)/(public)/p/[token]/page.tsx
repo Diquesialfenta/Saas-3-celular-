@@ -42,6 +42,7 @@ export default async function PublicProposal({ params }: { params: Promise<{ tok
         <h1 className="mt-3 text-[34px] sm:text-[44px] leading-[1.05] tracking-[-0.03em]">{p.title}</h1>
         {p.summary && <p className="mt-5 text-lg text-ink-2 leading-relaxed max-w-2xl">{p.summary}</p>}
 
+        {sections.length > 0 && (
         <div className="mt-10 grid gap-8">
           {sections.map((s, i) => (
             <section key={s.id ?? i} className="grid sm:grid-cols-[180px_1fr] gap-2 sm:gap-8 border-t border-line pt-6">
@@ -50,6 +51,7 @@ export default async function PublicProposal({ params }: { params: Promise<{ tok
             </section>
           ))}
         </div>
+        )}
 
         <ProposalView
           token={token}
