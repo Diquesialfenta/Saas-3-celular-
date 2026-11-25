@@ -1,10 +1,5 @@
 {
   "project_id": "appgprj_6b06cfc2c9ec8191ae7e9d4a05f0c421",
-  "d1": {
-    "binding": "DB",
-    "migrations_dir": "prisma/d1"
-  },
-  "r2": {
-    "binding": "BUCKET"
-  }
+  "d1": "DB",
+  "r2": "BUCKET"
 }
