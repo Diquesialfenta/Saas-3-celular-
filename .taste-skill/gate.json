@@ -1,0 +1,567 @@
+{
+ "start": "2026-11-25T04:17:17.954Z",
+ "round": 1,
+ "idle": 0,
+ "errors": 0,
+ "status": "pass",
+ "history": [
+  {
+   "at": "2026-11-25T05:25:59.760Z",
+   "mode": "manual",
+   "status": "fail",
+   "fails": 28,
+   "round": 1,
+   "reused": false,
+   "stopHookActive": false
+  },
+  {
+   "at": "2026-11-25T05:38:34.019Z",
+   "mode": "manual",
+   "status": "pass",
+   "fails": 0,
+   "round": 1,
+   "reused": false,
+   "stopHookActive": false
+  }
+ ],
+ "max": 3,
+ "marker": {
+  "page": null,
+  "dir": "/home/user/Saas-3-celular-",
+  "kind": "software",
+  "start": "2026-11-25T04:17:17.954Z",
+  "by": "start.mjs",
+  "url": "http://localhost:3000/",
+  "category": "software de gestión de clientes",
+  "primary": "Empezar la prueba gratis"
+ },
+ "manual": true,
+ "roundKey": "a3c7e7f07cfe5c48:da39a3ee",
+ "roundFree": false,
+ "idleFree": false,
+ "blockKey": null,
+ "fp": "02eb66e90e4c3144",
+ "page": "http://localhost:3000/",
+ "found": {
+  "fails": [
+   {
+    "check": "no-visual",
+    "where": "section#precios \"Precios por cuenta, no por cliente. 14 d\"",
+    "msg": "no picture, effect or mock in this section; a feature section needs a visual",
+    "fix": "give the section a visual: a UI fragment on a ground, real icons, or a photograph that fits",
+    "widths": [
+     1440,
+     390
+    ],
+    "from": "consistency",
+    "ids": [
+     "no-visual"
+    ],
+    "wheres": [
+     "section#precios \"Precios por cuenta, no por cliente. 14 d\""
+    ]
+   },
+   {
+    "check": "card-visual",
+    "where": "section#precios > div.wrap > div.grid.plans \"Independiente Para profesionales que tra\"",
+    "msg": "3 cards hold only text: no picture, icon, UI fragment or effect in any of them",
+    "fix": "give the cards a visual: an inset panel with a UI fragment, a photograph or real icons",
+    "widths": [
+     1440,
+     390
+    ],
+    "from": "consistency",
+    "ids": [
+     "card-visual"
+    ],
+    "wheres": [
+     "section#precios > div.wrap > div.grid.plans \"Independiente Para profesionales que tra\""
+    ]
+   },
+   {
+    "check": "button-styles",
+    "where": "(the page)",
+    "msg": "3 button styles on the page: pill, fill #232323 x3 (\"Empezar la prueba gratis\"); pill, fill #ebebeb x3 (\"Ver cómo funciona\"); pill, fill #a1ffcb x1 (\"Empezar la prueba gratis\")",
+    "fix": "one primary and one secondary button: one shape, one height per size, one label size",
+    "widths": [
+     1440,
+     390
+    ],
+    "from": "consistency",
+    "ids": [
+     "button-styles"
+    ],
+    "wheres": [
+     "(the page)"
+    ]
+   },
+   {
+    "check": "copy-headings",
+    "where": "div.wrap > div.grid.steps > article.card.card--row:nth-of-type(2) > h3 \"Ambos firman el contrato\"",
+    "msg": "\"Ambos firman el contrato\" names no product, part, place or section (12 headings like it; at most one brand line per page) (and 11 more like it: \"El anticipo se cobra sol\", \"Lo repetitivo se hace so\", \"Da la bienvenida al firm\", \"Redacta con IA\", ...)",
+    "fix": "name the thing in every heading: the product, a part, the place or a section noun",
+    "widths": [
+     1440
+    ],
+    "from": "consistency",
+    "ids": [
+     "copy-headings"
+    ],
+    "wheres": [
+     "div.wrap > div.grid.steps > article.card.card--row:nth-of-type(2) > h3 \"Ambos firman el contrato\""
+    ]
+   },
+   {
+    "check": "container-edges",
+    "where": "div.ui.app > div.app__pane.app__pane--open > div.p-open > div.p-mock \"Pan de masa madre recién horneadoPide an\"",
+    "msg": "a box over half the container wide runs 637-1336px, not on the container's lines at 80-1360px (SR-6)",
+    "fix": "run the picture or box from the container's left line to its right line, or put it in a row or a split",
+    "widths": [
+     1440
+    ],
+    "from": "consistency",
+    "ids": [
+     "container-edges"
+    ],
+    "wheres": [
+     "div.ui.app > div.app__pane.app__pane--open > div.p-open > div.p-mock \"Pan de masa madre recién horneadoPide an\""
+    ]
+   }
+  ],
+  "warns": [
+   {
+    "check": "flush",
+    "where": "section#equipos > div.mo-lc__stage > div.mo-lc__cover",
+    "msg": "its first line sits 17px under the top edge of section#equipos, where the ground changes",
+    "fix": "give the section its padding at the edge where the ground changes (the closing call keeps a clear gap above the footer)",
+    "widths": [
+     1440
+    ],
+    "from": "consistency"
+   },
+   {
+    "check": "no-visual",
+    "where": "section#preguntas \"Preguntas\"",
+    "msg": "pictures, effects and mocks cover 18% of this section; a feature section needs a visual (about 25% or more)",
+    "fix": "give the section a visual: a UI fragment on a ground, real icons, or a photograph that fits",
+    "widths": [
+     1440
+    ],
+    "from": "consistency"
+   },
+   {
+    "check": "cta",
+    "where": "section#automatizacion \"Lo repetitivo se hace solo. Tú decides q\"",
+    "msg": "a section over 1.5 screens long with no link or button in it",
+    "fix": "add the action: a button in the hero, one on every priced item, one in the closing section",
+    "widths": [
+     1440,
+     390
+    ],
+    "from": "consistency"
+   },
+   {
+    "check": "copy-buttons",
+    "where": "header.nav > div.wrap.nav__bar > div.nav__actions > a.btn.btn--primary \"Empezar la prueba gratis\"",
+    "msg": "\"Empezar la prueba gratis\" does not start with a verb (book, buy, try, start, get, see...) (and 2 more like it: \"Ver cómo funciona\", \"Probar Independiente Pro\")",
+    "fix": "label buttons with a verb and what the visitor gets (\"Book a room\", \"Start free trial\")",
+    "widths": [
+     1440
+    ],
+    "from": "consistency"
+   },
+   {
+    "check": "off-grid",
+    "where": "div.grid > div.span-5.stack-6 > ul.facts > li:nth-of-type(1) \"Departamentos, roles y permisos por pers\"",
+    "msg": "left edge at 98px, 18px off the page margin at 80px (31 elements); 2 more in this section off the grid too (li:nth-of-type(2) at 98px, li:nth-of-type(3) at 98px) (inside a held section or scroll scene, whose motion --quick does not check)",
+    "fix": "move it onto the page margin, or the column edge its section uses",
+    "widths": [
+     1440
+    ],
+    "from": "consistency"
+   },
+   {
+    "check": "text-contrast",
+    "where": "div.p-list > div.p-row:nth-of-type(3) > div > small \"Web nueva · v3\"",
+    "msg": "10 lines of text in drawn mocks read under 4.5:1 (2 colour pairs), the worst \"Web nueva · v3\" in #7b8086 on #f4fbf7 at 3.79:1",
+    "fix": "lift the mocks' muted text (labels, meta, initials) to 4.5:1 on their own panel, or set it larger",
+    "widths": [
+     1440
+    ],
+    "from": "consistency"
+   },
+   {
+    "check": "section-gaps",
+    "where": "section#automatizacion / section#equipos",
+    "msg": "89px between these sections, -53% against the median 189px of gaps at a change of ground",
+    "fix": "use one gap between sections (all within 25% of each other)",
+    "widths": [
+     1440
+    ],
+    "from": "consistency"
+   },
+   {
+    "check": "section-gaps",
+    "where": "section#preguntas / footer#contact",
+    "msg": "275px between these sections, +46% against the median 189px of gaps at a change of ground",
+    "fix": "use one gap between sections (all within 25% of each other)",
+    "widths": [
+     1440,
+     390
+    ],
+    "from": "consistency"
+   },
+   {
+    "check": "links",
+    "where": "div.wrap > div.grid > div.span-5.stack-5 > a.link \"Escribir al equipo\"",
+    "msg": "\"Escribir al equipo\" goes to #contact, in the footer",
+    "fix": "point every link at a real section, page or file",
+    "widths": [
+     1440
+    ],
+    "from": "consistency"
+   },
+   {
+    "check": "nav-labels",
+    "where": "header.nav > div.wrap.nav__bar > a.nav__logo \"Encauza\"",
+    "msg": "\"Encauza\" opens a section headed \"Gestión de clientes para agencias y freelancers\"",
+    "fix": "name each nav link after the heading of the section it opens",
+    "widths": [
+     1440
+    ],
+    "from": "consistency"
+   },
+   {
+    "check": "nav-labels",
+    "where": "div.wrap.nav__bar > nav.nav__links > div.nav__item:nth-of-type(1) > a.nav__link \"Producto\"",
+    "msg": "\"Producto\" opens a section headed \"Un portal privado para cada cliente\"",
+    "fix": "name each nav link after the heading of the section it opens",
+    "widths": [
+     1440
+    ],
+    "from": "consistency"
+   },
+   {
+    "check": "nav-labels",
+    "where": "div.nav__item:nth-of-type(1) > div.nav__menu > div.wrap.grid > a.menu-card.span-4:nth-of-type(1) \"PRO-2026-0042AceptadaWeb corporativa · 4\"",
+    "msg": "\"PRO-2026-0042AceptadaWeb corporativa · 4\" opens a section headed \"De la propuesta al cobro en 3 pasos. Sin copiar da\"",
+    "fix": "name each nav link after the heading of the section it opens",
+    "widths": [
+     1440
+    ],
+    "from": "consistency"
+   },
+   {
+    "check": "nav-labels",
+    "where": "div.nav__item:nth-of-type(1) > div.nav__menu > div.wrap.grid > a.menu-card.span-4:nth-of-type(3) \"Contrato firmadoOnboardingPortal, formul\"",
+    "msg": "\"Contrato firmadoOnboardingPortal, formul\" opens a section headed \"Lo repetitivo se hace solo. Tú decides qué pasa de\"",
+    "fix": "name each nav link after the heading of the section it opens",
+    "widths": [
+     1440
+    ],
+    "from": "consistency"
+   },
+   {
+    "check": "nav-labels",
+    "where": "div.wrap.nav__bar > nav.nav__links > div.nav__item:nth-of-type(2) > a.nav__link \"Cómo funciona\"",
+    "msg": "\"Cómo funciona\" opens a section headed \"De la propuesta al cobro en 3 pasos. Sin copiar da\"",
+    "fix": "name each nav link after the heading of the section it opens",
+    "widths": [
+     1440
+    ],
+    "from": "consistency"
+   },
+   {
+    "check": "nav-labels",
+    "where": "div.wrap.nav__bar > nav.nav__links > div.nav__item:nth-of-type(3) > a.nav__link \"Equipos\"",
+    "msg": "\"Equipos\" opens a section headed \"Empieza solo y crece a empresa\"",
+    "fix": "name each nav link after the heading of the section it opens",
+    "widths": [
+     1440
+    ],
+    "from": "consistency"
+   },
+   {
+    "check": "label-centre",
+    "where": "header.nav > div.wrap.nav__bar > div.nav__actions > a.btn.btn--primary \"Empezar la prueba gratis\"",
+    "msg": "its label sits 18px off-centre (25px of room at the left, 43px at the right) (and 1 more like it: \"Probar Independiente Pro\")",
+    "fix": "centre the label in its button, or fill the empty side with an icon",
+    "widths": [
+     1440
+    ],
+    "from": "consistency"
+   },
+   {
+    "check": "copy-length",
+    "where": "section#precios \"Precios por cuenta, no por cliente. 14 d\"",
+    "msg": "4 sections over 90 words a screen outside the UI mocks (\"Precios por cuenta, no p\" 150, \"De la propuesta al cobro\" 146, \"Preguntas\" 137); 106 words a screen across the page (844 words in 8 screens): a tech page says it in about 80 or fewer",
+    "fix": "cut every section to its heading, one line and the product UI: the UI says the rest; no second paragraph, no list of feature sentences",
+    "widths": [
+     1440
+    ],
+    "from": "consistency"
+   },
+   {
+    "check": "nav-current",
+    "where": "header.nav",
+    "msg": "the nav stays on screen with 5 links to the page's sections, but never marks the one you are in (no link changes as the page scrolls)",
+    "fix": "mark the link of the section on screen (a colour, a weight or a line under it) as the visitor scrolls",
+    "widths": [
+     1440
+    ],
+    "from": "consistency"
+   },
+   {
+    "check": "button-contrast",
+    "where": "div.hero-text.grid > div.hero__text.span-5 > div.btn-row > a.btn.btn--secondary \"Ver cómo funciona\"",
+    "msg": "the button \"Ver cómo funciona\" (#ebebeb) stands only 1.19:1 off the ground around it: it reads as part of the ground, or as switched off",
+    "fix": "give the button a fill that stands at least 1.5:1 off what is around it, or an outline in the ink",
+    "widths": [
+     1440,
+     390
+    ],
+    "from": "consistency"
+   },
+   {
+    "check": "button-contrast",
+    "where": "div.wrap > div.grid.plans > article.card.card--plan:nth-of-type(1) > a.btn.btn--secondary \"Probar Independiente\"",
+    "msg": "the button \"Probar Independiente\" (#ebebeb) stands only 1.07:1 off the ground around it: it reads as part of the ground, or as switched off",
+    "fix": "give the button a fill that stands at least 1.5:1 off what is around it, or an outline in the ink",
+    "widths": [
+     1440,
+     390
+    ],
+    "from": "consistency"
+   },
+   {
+    "check": "button-contrast",
+    "where": "div.wrap > div.grid.plans > article.card.card--plan:nth-of-type(3) > a.btn.btn--secondary \"Probar Empresa\"",
+    "msg": "the button \"Probar Empresa\" (#ebebeb) stands only 1.07:1 off the ground around it: it reads as part of the ground, or as switched off",
+    "fix": "give the button a fill that stands at least 1.5:1 off what is around it, or an outline in the ink",
+    "widths": [
+     1440,
+     390
+    ],
+    "from": "consistency"
+   },
+   {
+    "check": "action-repeat",
+    "where": "header.nav > div.wrap.nav__bar > div.nav__actions > a.btn.btn--primary:nth-of-type(2) \"empezar la prueba gratis\"",
+    "msg": "\"empezar la prueba gratis\" shows 2 times on the first screen at 1440px (nav, hero): the nav's button and the hero's; nothing else on the screen may repeat it",
+    "fix": "show the action once a screen besides the nav's button: the hero's, the close's or the phone bar's, never all at once",
+    "widths": [
+     1440
+    ],
+    "from": "consistency"
+   },
+   {
+    "check": "cut-text",
+    "where": "div.team__rows > div.team__row:nth-of-type(5) > div > small \"Redes\"",
+    "msg": "cut 9px at the bottom by the overflow of section#equipos > div.wrap > div.grid > div.frame.frame--split (inside a held section or scroll scene, whose motion --quick does not check)",
+    "fix": "give the text room: no overflow clipping a line, no line past its box",
+    "widths": [
+     390
+    ],
+    "from": "consistency"
+   },
+   {
+    "check": "stagger",
+    "where": "div.wrap > div.grid > div.span-5.stack-6 > ul.facts \"Departamentos, roles y permisos por pers\"",
+    "msg": "3 rows start at 2 different left offsets (+0, +0, +18px) (inside a held section or scroll scene, whose motion --quick does not check)",
+    "fix": "start every row of the list on one left edge",
+    "widths": [
+     390
+    ],
+    "from": "consistency"
+   },
+   {
+    "check": "off-grid",
+    "where": "div.grid > div.span-5.stack-6 > ul.facts > li:nth-of-type(3) \"Analítica de cobros, ventas y entregas\"",
+    "msg": "left edge at 42px, 18px off the page margin at 24px (61 elements) (inside a held section or scroll scene, whose motion --quick does not check)",
+    "fix": "move it onto the page margin, or the column edge its section uses",
+    "widths": [
+     390
+    ],
+    "from": "consistency"
+   },
+   {
+    "check": "contrast",
+    "where": "div.team__rows > div.team__row:nth-of-type(5) > div > small \"Redes\"",
+    "msg": "body text over a effect reads at 3.0:1 at its worst tenth (needs 4.5:1) (inside a held section or scroll scene, whose motion --quick does not check)",
+    "fix": "put the text on a calm part of the picture, or on a solid panel",
+    "widths": [
+     390
+    ],
+    "from": "consistency"
+   },
+   {
+    "check": "text-contrast",
+    "where": "div.p-open > div.p-open__head > div > small \"Web nueva para Panadería Sol\"",
+    "msg": "1 line of text in drawn mocks read under 4.5:1 (1 colour pair), the worst \"Web nueva para Panadería\" in #7b8086 on #ffffff at 3.98:1",
+    "fix": "lift the mocks' muted text (labels, meta, initials) to 4.5:1 on their own panel, or set it larger",
+    "widths": [
+     390
+    ],
+    "from": "consistency"
+   },
+   {
+    "check": "section-gaps",
+    "where": "main#top > section.hero.hero--collage / section#portal",
+    "msg": "117px between these sections, -43% against the median 205px",
+    "fix": "use one gap between sections (all within 25% of each other)",
+    "widths": [
+     390
+    ],
+    "from": "consistency"
+   },
+   {
+    "check": "section-gaps",
+    "where": "section#equipos / section#precios",
+    "msg": "206px between these sections, -35% against the median 315px of gaps at a change of ground",
+    "fix": "use one gap between sections (all within 25% of each other)",
+    "widths": [
+     390
+    ],
+    "from": "consistency"
+   },
+   {
+    "check": "section-gaps",
+    "where": "section#precios / section#preguntas",
+    "msg": "320px between these sections, +56% against the median 205px",
+    "fix": "use one gap between sections (all within 25% of each other)",
+    "widths": [
+     390
+    ],
+    "from": "consistency"
+   },
+   {
+    "check": "label-centre",
+    "where": "div.wrap > div.grid.plans > article.card.card--plan:nth-of-type(2) > a.btn.btn--primary \"Probar Independiente Pro\"",
+    "msg": "its label sits 18px off-centre (48px of room at the left, 66px at the right)",
+    "fix": "centre the label in its button, or fill the empty side with an icon",
+    "widths": [
+     390
+    ],
+    "from": "consistency"
+   },
+   {
+    "check": "orphan",
+    "where": "div.grid > div.span-5.stack-6 > ul.facts > li:nth-of-type(2) \"Carga de trabajo frente a las horas de c\"",
+    "msg": "its last line holds only \"uno\" (inside a held section or scroll scene, whose motion --quick does not check)",
+    "fix": "rebalance the text (text-wrap: pretty, or a shorter line) so the last line holds more than one short word",
+    "widths": [
+     390
+    ],
+    "from": "consistency"
+   },
+   {
+    "check": "fade-cut",
+    "where": "div.wrap > div.grid.plans > article.card.card--plan:nth-of-type(1) > p.plan__who \"Para profesionales que trabajan solos y \"",
+    "msg": "a line of article.card.card--plan:nth-of-type(1) fades out under its edge (\"Para profesionales que\"): drawn at a fraction of #3f3f3f on #f3f3f3, half-erased",
+    "fix": "fit the mock's rows inside its panel (fewer rows, a taller panel), or end the fade below the last whole row: no row half-erased",
+    "widths": [
+     390
+    ],
+    "from": "consistency"
+   }
+  ],
+  "crashed": [],
+  "seconds": {
+   "consistency": 109,
+   "layout": 3
+  }
+ },
+ "open": [],
+ "waived": [
+  {
+   "check": "no-visual",
+   "where": "section#precios \"Precios por cuenta, no por cliente. 14 d\"",
+   "msg": "no picture, effect or mock in this section; a feature section needs a visual",
+   "fix": "give the section a visual: a UI fragment on a ground, real icons, or a photograph that fits",
+   "widths": [
+    1440,
+    390
+   ],
+   "from": "consistency",
+   "ids": [
+    "no-visual"
+   ],
+   "wheres": [
+    "section#precios \"Precios por cuenta, no por cliente. 14 d\""
+   ],
+   "reason": "Price list: sections.md allows one picture-less price list; its neighbour FAQ carries a visual."
+  },
+  {
+   "check": "card-visual",
+   "where": "section#precios > div.wrap > div.grid.plans \"Independiente Para profesionales que tra\"",
+   "msg": "3 cards hold only text: no picture, icon, UI fragment or effect in any of them",
+   "fix": "give the cards a visual: an inset panel with a UI fragment, a photograph or real icons",
+   "widths": [
+    1440,
+    390
+   ],
+   "from": "consistency",
+   "ids": [
+    "card-visual"
+   ],
+   "wheres": [
+    "section#precios > div.wrap > div.grid.plans \"Independiente Para profesionales que tra\""
+   ],
+   "reason": "These are plan cards of a price list (pricing-three recipe has no visual in the cards)."
+  },
+  {
+   "check": "button-styles",
+   "where": "(the page)",
+   "msg": "3 button styles on the page: pill, fill #232323 x3 (\"Empezar la prueba gratis\"); pill, fill #ebebeb x3 (\"Ver cómo funciona\"); pill, fill #a1ffcb x1 (\"Empezar la prueba gratis\")",
+   "fix": "one primary and one secondary button: one shape, one height per size, one label size",
+   "widths": [
+    1440,
+    390
+   ],
+   "from": "consistency",
+   "ids": [
+    "button-styles"
+   ],
+   "wheres": [
+    "(the page)"
+   ],
+   "reason": "The third style is the kit's own .btn--primary on footer-dark's inverse ground (--p-inv-action), not a page style."
+  },
+  {
+   "check": "copy-headings",
+   "where": "div.wrap > div.grid.steps > article.card.card--row:nth-of-type(2) > h3 \"Ambos firman el contrato\"",
+   "msg": "\"Ambos firman el contrato\" names no product, part, place or section (12 headings like it; at most one brand line per page) (and 11 more like it: \"El anticipo se cobra sol\", \"Lo repetitivo se hace so\", \"Da la bienvenida al firm\", \"Redacta con IA\", ...)",
+   "fix": "name the thing in every heading: the product, a part, the place or a section noun",
+   "widths": [
+    1440
+   ],
+   "from": "consistency",
+   "ids": [
+    "copy-headings"
+   ],
+   "wheres": [
+    "div.wrap > div.grid.steps > article.card.card--row:nth-of-type(2) > h3 \"Ambos firman el contrato\""
+   ],
+   "reason": "Spanish copy: card titles are a verb plus an object (copy.md); the heuristic reads English nouns only."
+  },
+  {
+   "check": "container-edges",
+   "where": "div.ui.app > div.app__pane.app__pane--open > div.p-open > div.p-mock \"Pan de masa madre recién horneadoPide an\"",
+   "msg": "a box over half the container wide runs 637-1336px, not on the container's lines at 80-1360px (SR-6)",
+   "fix": "run the picture or box from the container's left line to its right line, or put it in a row or a split",
+   "widths": [
+    1440
+   ],
+   "from": "consistency",
+   "ids": [
+    "container-edges"
+   ],
+   "wheres": [
+    "div.ui.app > div.app__pane.app__pane--open > div.p-open > div.p-mock \"Pan de masa madre recién horneadoPide an\""
+   ],
+   "reason": "The box is a mock-up inside the drawn app window (div.ui.app), not a page block; the window itself runs line to line."
+  }
+ ],
+ "warnCount": 33,
+ "at": "2026-11-25T05:38:34.019Z"
+}

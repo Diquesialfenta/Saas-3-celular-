@@ -1,0 +1,27 @@
+[
+  {
+    "check": "no-visual",
+    "target": "section#precios",
+    "reason": "Price list: sections.md allows one picture-less price list; its neighbour FAQ carries a visual."
+  },
+  {
+    "check": "card-visual",
+    "target": "section#precios > div.wrap > div.grid.plans",
+    "reason": "These are plan cards of a price list (pricing-three recipe has no visual in the cards)."
+  },
+  {
+    "check": "button-styles",
+    "target": "(the page)",
+    "reason": "The third style is the kit's own .btn--primary on footer-dark's inverse ground (--p-inv-action), not a page style."
+  },
+  {
+    "check": "copy-headings",
+    "target": "Ambos firman el contrato",
+    "reason": "Spanish copy: card titles are a verb plus an object (copy.md); the heuristic reads English nouns only."
+  },
+  {
+    "check": "container-edges",
+    "target": "div.p-mock",
+    "reason": "The box is a mock-up inside the drawn app window (div.ui.app), not a page block; the window itself runs line to line."
+  }
+]
