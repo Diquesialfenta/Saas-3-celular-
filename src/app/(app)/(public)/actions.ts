@@ -18,11 +18,11 @@ import { emailLayout, sendEmail } from "@/lib/email";
 
 export const acceptProposalAction = action(async (fd) => {
   const p = await db.proposal.findUnique({ where: { publicToken: str(fd, "token") }, include: { items: true } });
-  if (!p) throw new Error("Propuesta no encontrada");
+  if (!p || p.status === "DRAFT") throw new Error("Propuesta no encontrada");
   if (p.status === "ACCEPTED") return "Esta propuesta ya estaba aceptada.";
   if (p.status === "DECLINED") throw new Error("Esta propuesta fue rechazada. Pide una nueva al proveedor.");
-  if (p.validUntil && p.validUntil < new Date()) {
-    await db.proposal.update({ where: { id: p.id }, data: { status: "EXPIRED" } });
+  if (p.status === "EXPIRED" || (p.validUntil && p.validUntil < new Date())) {
+    await db.proposal.updateMany({ where: { id: p.id, status: { in: ["SENT", "VIEWED"] } }, data: { status: "EXPIRED" } });
     throw new Error("La propuesta ha caducado. Pide al proveedor que la renueve.");
   }
   const name = required(fd, "name", "tu nombre");
@@ -37,12 +37,12 @@ export const acceptProposalAction = action(async (fd) => {
     DB.prepare(`
       UPDATE "ProposalItem" SET "isSelected" = "id" IN (SELECT value FROM json_each(?))
       WHERE "proposalId" = ? AND "isOptional" = 1
-        AND EXISTS (SELECT 1 FROM "Proposal" WHERE "id" = ? AND "status" NOT IN ('ACCEPTED', 'DECLINED'))
+        AND EXISTS (SELECT 1 FROM "Proposal" WHERE "id" = ? AND "status" IN ('SENT', 'VIEWED'))
     `).bind(JSON.stringify([...selected]), p.id, p.id),
     DB.prepare(`
       UPDATE "Proposal" SET "status" = 'ACCEPTED', "acceptedAt" = ?, "acceptedByName" = ?,
         "acceptedByEmail" = ?, "acceptedIp" = ?, "updatedAt" = ?
-      WHERE "id" = ? AND "status" NOT IN ('ACCEPTED', 'DECLINED')
+      WHERE "id" = ? AND "status" IN ('SENT', 'VIEWED')
     `).bind(now, name, email, clientIp(h), now, p.id),
   ]);
   if (!accepted.meta.changes) return "La propuesta ya fue respondida.";
@@ -56,8 +56,14 @@ export const acceptProposalAction = action(async (fd) => {
 
 export const declineProposalAction = action(async (fd) => {
   const p = await db.proposal.findUnique({ where: { publicToken: str(fd, "token") } });
-  if (!p || p.status === "ACCEPTED") throw new Error("No se puede rechazar esta propuesta.");
-  await db.proposal.update({ where: { id: p.id }, data: { status: "DECLINED", declinedAt: new Date(), declineReason: optStr(fd, "reason") } });
+  if (!p || (p.status !== "SENT" && p.status !== "VIEWED") || (p.validUntil && p.validUntil < new Date())) {
+    throw new Error("No se puede rechazar esta propuesta.");
+  }
+  const declined = await db.proposal.updateMany({
+    where: { id: p.id, status: { in: ["SENT", "VIEWED"] } },
+    data: { status: "DECLINED", declinedAt: new Date(), declineReason: optStr(fd, "reason") },
+  });
+  if (!declined.count) throw new Error("La propuesta ya fue respondida.");
   if (p.dealId) await db.deal.update({ where: { id: p.dealId }, data: { stage: "LOST", status: "LOST", lostReason: optStr(fd, "reason"), closedAt: new Date() } });
   await activity({ workspaceId: p.workspaceId, clientId: p.clientId, content: `Propuesta ${p.number} rechazada${optStr(fd, "reason") ? `: ${optStr(fd, "reason")}` : ""}` });
   await notifyTeam(p.workspaceId, { title: `Propuesta ${p.number} rechazada`, link: `/app/propuestas/${p.id}` });

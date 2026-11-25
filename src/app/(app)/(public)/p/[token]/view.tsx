@@ -9,7 +9,6 @@ type Item = { id: string; name: string; description: string | null; quantity: nu
 type Act = Parameters<typeof ActionForm>[0]["action"];
 
 export function ProposalView(p: {
-  token: string;
   brandColor: string;
   currency: string;
   taxRate: number;
@@ -20,9 +19,7 @@ export function ProposalView(p: {
   acceptedBy: string | null;
   acceptedAt: string | null;
   items: Item[];
-  accept: Act;
-  decline: Act;
-  defaultEmail: string;
+  response?: { token: string; accept: Act; decline: Act; defaultEmail: string };
 }) {
   const [selected, setSelected] = useState(() => new Set(p.items.filter((i) => i.isOptional && i.isSelected).map((i) => i.id)));
   const [mode, setMode] = useState<"idle" | "accept" | "decline" | "done">(p.status === "ACCEPTED" || p.status === "DECLINED" ? "done" : "idle");
@@ -36,6 +33,7 @@ export function ProposalView(p: {
   const recurring = included.filter((i) => i.recurring !== "NONE");
   const final = result ?? (p.status === "ACCEPTED" || p.status === "DECLINED" ? p.status : null);
   const open = p.status === "SENT" || p.status === "VIEWED";
+  const response = p.response;
   const per = (r: string) => (r === "MONTHLY" ? "/mes" : r === "YEARLY" ? "/año" : "");
 
   return (
@@ -53,7 +51,7 @@ export function ProposalView(p: {
                     role="checkbox"
                     aria-checked={on}
                     aria-label={`Incluir ${i.name}`}
-                    disabled={!open}
+                    disabled={!open && p.status !== "DRAFT"}
                     onClick={() =>
                       setSelected((s) => {
                         const n = new Set(s);
@@ -116,7 +114,7 @@ export function ProposalView(p: {
         {recurring.length > 0 && <li>Los conceptos periódicos se facturan automáticamente cada periodo.</li>}
       </ul>
 
-      <div className="mt-8">
+      {response && <div className="mt-8">
         {final || mode === "done" ? (
           <Card className={cx("p-6", final === "ACCEPTED" ? "bg-ok-bg border-ok/20" : "")}>
             {final === "ACCEPTED" ? (
@@ -143,14 +141,14 @@ export function ProposalView(p: {
           <Card className="pop p-6">
             <h3 className="text-lg">Aceptar la propuesta</h3>
             <ActionForm
-              action={p.accept}
+              action={response.accept}
               className="mt-4 grid gap-4"
               onDone={() => {
                 setResult("ACCEPTED");
                 setMode("done");
               }}
             >
-              <input type="hidden" name="token" value={p.token} />
+              <input type="hidden" name="token" value={response.token} />
               {[...selected].map((id) => (
                 <input key={id} type="hidden" name="optional" value={id} />
               ))}
@@ -159,7 +157,7 @@ export function ProposalView(p: {
                   <Input id="name" name="name" autoComplete="name" required />
                 </Field>
                 <Field label="Correo" htmlFor="email">
-                  <Input id="email" name="email" type="email" autoComplete="email" defaultValue={p.defaultEmail} required />
+                  <Input id="email" name="email" type="email" autoComplete="email" defaultValue={response.defaultEmail} required />
                 </Field>
               </div>
               <label className="flex items-start gap-2.5 text-sm cursor-pointer">
@@ -180,14 +178,14 @@ export function ProposalView(p: {
           <Card className="pop p-6">
             <h3 className="text-lg">¿Qué no encaja?</h3>
             <ActionForm
-              action={p.decline}
+              action={response.decline}
               className="mt-4 grid gap-4"
               onDone={() => {
                 setResult("DECLINED");
                 setMode("done");
               }}
             >
-              <input type="hidden" name="token" value={p.token} />
+              <input type="hidden" name="token" value={response.token} />
               <Field label="Motivo (opcional)" htmlFor="reason">
                 <Textarea id="reason" name="reason" placeholder="Precio, plazos, alcance…" />
               </Field>
@@ -200,7 +198,7 @@ export function ProposalView(p: {
             </ActionForm>
           </Card>
         )}
-      </div>
+      </div>}
     </section>
   );
 }

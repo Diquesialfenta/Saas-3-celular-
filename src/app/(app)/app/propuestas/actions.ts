@@ -88,6 +88,31 @@ export const saveProposalAction = action(async (fd) => {
   return "Propuesta guardada";
 }, "/app/propuestas");
 
+export const publishProposalLinkAction = action(async (fd) => {
+  const ctx = await actionContext("sales.manage");
+  const p = await db.proposal.findFirst({
+    where: { id: str(fd, "id"), workspaceId: ctx.workspaceId },
+    include: { _count: { select: { items: true } } },
+  });
+  if (!p) throw new Error("Propuesta no encontrada");
+  const url = appUrl(`/p/${p.publicToken}`);
+  if (p.status !== "DRAFT") return { data: { url } };
+  if (p._count.items === 0) throw new Error("Añade al menos un concepto con precio antes de publicar el enlace.");
+
+  const published = await db.proposal.updateMany({
+    where: { id: p.id, workspaceId: ctx.workspaceId, status: "DRAFT", items: { some: {} } },
+    data: { status: "SENT", sentAt: new Date() },
+  });
+  if (!published.count) {
+    const current = await db.proposal.findFirst({ where: { id: p.id, workspaceId: ctx.workspaceId }, select: { status: true } });
+    if (!current || current.status === "DRAFT") throw new Error("Guarda los conceptos de la propuesta antes de publicar el enlace.");
+    return { data: { url } };
+  }
+  if (p.dealId) await db.deal.update({ where: { id: p.dealId }, data: { stage: "PROPOSAL", probability: 60 } });
+  await activity({ workspaceId: p.workspaceId, clientId: p.clientId, content: `Enlace de la propuesta ${p.number} publicado`, userId: ctx.user.id });
+  return { message: "Enlace listo para compartir", data: { url } };
+}, "/app/propuestas");
+
 export const sendProposalAction = action(async (fd) => {
   const ctx = await actionContext("sales.manage");
   const p = await db.proposal.findFirst({ where: { id: str(fd, "id"), workspaceId: ctx.workspaceId }, include: { client: { include: { contacts: true } }, items: true } });

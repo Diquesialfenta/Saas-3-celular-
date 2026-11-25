@@ -9,7 +9,7 @@ import { isAiConfigured } from "@/lib/ai";
 import { ActionButton, CopyButton, LinkResultForm, Modal, SubmitButton } from "@/components/forms";
 import { Card, Field, Input, Notice, PageHeader, StatusBadge, Textarea } from "@/components/ui";
 import {
-  deleteProposalAction, draftProposalWithAI, duplicateProposalAction, proposalToContractAction, proposalToInvoicesAction, saveProposalAction, sendProposalAction,
+  deleteProposalAction, draftProposalWithAI, duplicateProposalAction, proposalToContractAction, proposalToInvoicesAction, publishProposalLinkAction, saveProposalAction, sendProposalAction,
 } from "../actions";
 import { ProposalEditor } from "./editor";
 
@@ -22,7 +22,9 @@ export default async function ProposalPage({ params }: { params: Promise<{ id: s
   });
   if (!p) notFound();
   const invoices = await db.invoice.count({ where: { workspaceId: ctx.workspaceId, proposalId: p.id } });
-  const url = appUrl(`/p/${p.publicToken}`);
+  const path = `/p/${p.publicToken}`;
+  const url = appUrl(path);
+  const draft = p.status === "DRAFT";
   const email = p.client.contacts.find((c) => c.isPrimary)?.email ?? p.client.email ?? "";
   const locked = p.status === "ACCEPTED";
   const timeline = [
@@ -52,12 +54,25 @@ export default async function ProposalPage({ params }: { params: Promise<{ id: s
         }
         actions={
           <>
-            <a href={url} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1.5 text-sm text-muted hover:text-ink px-2">
+            <a href={`${path}?vista=previa`} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1.5 text-sm text-muted hover:text-ink px-2">
               Vista del cliente <ExternalLink className="size-3.5" />
             </a>
-            <CopyButton value={url} />
+            <Modal trigger="Copiar enlace" triggerSize="sm" triggerVariant="secondary" title="Compartir propuesta">
+              {draft ? (
+                <LinkResultForm action={publishProposalLinkAction} className="grid gap-3">
+                  <p className="text-sm text-muted">Publica la propuesta para activar el enlace. Así podrás compartirlo sin enviar un correo desde Encauza.</p>
+                  <input type="hidden" name="id" value={p.id} />
+                  <SubmitButton pendingLabel="Publicando">Publicar enlace</SubmitButton>
+                </LinkResultForm>
+              ) : (
+                <div className="flex items-center gap-2">
+                  <Input readOnly value={url} aria-label="Enlace de la propuesta" className="min-w-0 flex-1 font-mono text-sm" />
+                  <CopyButton value={url} label="Copiar" />
+                </div>
+              )}
+            </Modal>
             {!locked && (
-              <Modal trigger={p.status === "DRAFT" ? "Enviar al cliente" : "Reenviar"} title="Enviar propuesta" description="El cliente recibe un enlace privado para revisarla y aceptarla.">
+              <Modal trigger={draft ? "Enviar al cliente" : "Reenviar"} title="Enviar propuesta" description="El cliente recibe un enlace privado para revisarla y aceptarla.">
                 <LinkResultForm action={sendProposalAction} className="grid gap-4" note="Enlace de la propuesta:">
                   <input type="hidden" name="id" value={p.id} />
                   <Field label="Correo del cliente" htmlFor="to">

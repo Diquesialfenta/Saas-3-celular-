@@ -1,31 +1,46 @@
 import { notFound } from "next/navigation";
 import { db } from "@/lib/db";
 import { activity, notifyTeam } from "@/lib/audit";
+import { getWorkspaceContext } from "@/lib/tenant";
 import { date } from "@/lib/format";
 import { BrandedShell } from "@/components/branded";
-import { StatusBadge } from "@/components/ui";
+import { Notice, StatusBadge } from "@/components/ui";
 import { acceptProposalAction, declineProposalAction } from "../../actions";
 import { ProposalView } from "./view";
 
 export const metadata = { title: "Propuesta", robots: { index: false } };
 
-export default async function PublicProposal({ params }: { params: Promise<{ token: string }> }) {
-  const { token } = await params;
+export const dynamic = "force-dynamic";
+
+export default async function PublicProposal({ params, searchParams }: {
+  params: Promise<{ token: string }>;
+  searchParams: Promise<{ vista?: string }>;
+}) {
+  const [{ token }, { vista }] = await Promise.all([params, searchParams]);
+  const preview = vista === "previa";
+  const ctx = preview ? await getWorkspaceContext() : null;
+  if (preview && (!ctx?.can("sales.manage") || ctx.workspace.isSuspended)) notFound();
   const p = await db.proposal.findUnique({
-    where: { publicToken: token },
+    where: { publicToken: token, ...(ctx && { workspaceId: ctx.workspaceId }) },
     include: { items: { orderBy: { sortOrder: "asc" } }, client: true, workspace: true },
   });
-  if (!p || p.status === "DRAFT") notFound();
-  if (!p.viewedAt) {
-    await db.proposal.update({ where: { id: p.id }, data: { viewedAt: new Date(), status: p.status === "SENT" ? "VIEWED" : p.status } });
-    await activity({ workspaceId: p.workspaceId, clientId: p.clientId, content: `${p.client.name} abrió la propuesta ${p.number}` });
-    await notifyTeam(p.workspaceId, { title: `${p.client.name} abrió la propuesta`, body: p.title, link: `/app/propuestas/${p.id}` });
+  if (!p || (!preview && p.status === "DRAFT")) notFound();
+  if (!preview && !p.viewedAt) {
+    const viewed = await db.proposal.updateMany({
+      where: { id: p.id, status: p.status, viewedAt: null },
+      data: { viewedAt: new Date(), ...(p.status === "SENT" && { status: "VIEWED" }) },
+    });
+    if (viewed.count) {
+      await activity({ workspaceId: p.workspaceId, clientId: p.clientId, content: `${p.client.name} abrió la propuesta ${p.number}` });
+      await notifyTeam(p.workspaceId, { title: `${p.client.name} abrió la propuesta`, body: p.title, link: `/app/propuestas/${p.id}` });
+    }
   }
   const sections = (p.sections as { id: string; title: string; body: string }[]) ?? [];
   const expired = p.validUntil && p.validUntil < new Date() && p.status !== "ACCEPTED";
 
   return (
     <BrandedShell brand={p.workspace}>
+      {preview && <div className="mb-5"><Notice tone="info">Vista previa del cliente. Las respuestas están deshabilitadas en esta vista.</Notice></div>}
       <article className="stagger">
         <div className="flex flex-wrap items-center gap-2 text-[13px] text-muted">
           <span className="font-mono">{p.number}</span>
@@ -54,7 +69,6 @@ export default async function PublicProposal({ params }: { params: Promise<{ tok
         )}
 
         <ProposalView
-          token={token}
           brandColor={p.workspace.brandColor}
           currency={p.currency}
           taxRate={p.taxRate}
@@ -65,9 +79,7 @@ export default async function PublicProposal({ params }: { params: Promise<{ tok
           acceptedBy={p.acceptedByName}
           acceptedAt={p.acceptedAt?.toISOString() ?? null}
           items={p.items.map((i) => ({ id: i.id, name: i.name, description: i.description, quantity: i.quantity, unitPrice: i.unitPrice, recurring: i.recurring, isOptional: i.isOptional, isSelected: i.isSelected }))}
-          accept={acceptProposalAction}
-          decline={declineProposalAction}
-          defaultEmail={p.client.email ?? ""}
+          response={preview ? undefined : { token, accept: acceptProposalAction, decline: declineProposalAction, defaultEmail: p.client.email ?? "" }}
         />
       </article>
     </BrandedShell>
