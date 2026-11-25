@@ -1,0 +1,200 @@
+@import "tailwindcss";
+
+/*
+ * Sistema del producto. Mismos tokens que la web pública (taste-skill: white-mint-tiles, Funnel):
+ * 90-95 % neutro, tinta casi negra, un único acento menta para estado y foco.
+ * Movimiento (emil-design-eng): curvas propias, < 250 ms en UI, press 0.97, hover solo con puntero fino.
+ */
+
+@theme {
+  --color-bg: #ffffff;
+  --color-surface: #f6f6f5;
+  --color-surface-2: #efefed;
+  --color-ink: #232323;
+  --color-ink-2: #3d3d3d;
+  --color-muted: #686868;
+  --color-faint: #8f8f8f;
+  --color-line: rgb(35 35 35 / 0.1);
+  --color-line-strong: rgb(35 35 35 / 0.18);
+  --color-accent: #a1ffcb;
+  --color-accent-strong: #5fe59e;
+  --color-accent-ink: #0f3d26;
+  --color-danger: #c4362b;
+  --color-danger-bg: #fdecea;
+  --color-warn: #8a5a00;
+  --color-warn-bg: #fff4d6;
+  --color-info: #1f4fa8;
+  --color-info-bg: #e7efff;
+  --color-ok: #136c3d;
+  --color-ok-bg: #e3f8ec;
+
+  --font-sans: var(--font-text), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-display-face), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-mono-face), ui-monospace, monospace;
+
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 20px;
+
+  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+  --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
+  --ease-drawer: cubic-bezier(0.32, 0.72, 0, 1);
+
+  --shadow-pop: 0 1px 2px rgb(0 0 0 / 0.04), 0 8px 24px -6px rgb(0 0 0 / 0.12);
+  --shadow-card: 0 1px 2px rgb(0 0 0 / 0.04);
+}
+
+@layer base {
+  html {
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+  body {
+    background: var(--color-bg);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    font-size: 15px;
+    line-height: 1.5;
+  }
+  h1, h2, h3 {
+    font-family: var(--font-display);
+    font-weight: 500;
+    letter-spacing: -0.02em;
+  }
+  ::selection {
+    background: var(--color-accent);
+    color: var(--color-ink);
+  }
+  :focus-visible {
+    outline: 2px solid var(--color-ink);
+    outline-offset: 2px;
+  }
+  input, textarea, select, button {
+    font: inherit;
+  }
+}
+
+/* Pulsación: el botón confirma que ha oído al usuario. */
+.press {
+  transition: transform 160ms var(--ease-out), background-color 150ms ease, border-color 150ms ease, color 150ms ease;
+}
+.press:active:not(:disabled) {
+  transform: scale(0.97);
+}
+
+/* Elevación al pasar el puntero, solo con ratón. */
+@media (hover: hover) and (pointer: fine) {
+  .lift {
+    transition: transform 200ms var(--ease-out), border-color 150ms ease, box-shadow 200ms var(--ease-out);
+  }
+  .lift:hover {
+    transform: translateY(-2px);
+    border-color: var(--color-line-strong);
+    box-shadow: var(--shadow-pop);
+  }
+}
+
+/* Popovers y menús: entran desde su disparador. */
+.pop {
+  transform-origin: var(--origin, top left);
+  transition: opacity 150ms var(--ease-out), transform 150ms var(--ease-out);
+  @starting-style {
+    opacity: 0;
+    transform: scale(0.97);
+  }
+}
+
+/* Diálogos centrados: escala desde el centro, salida más rápida que la entrada. */
+dialog.modal {
+  opacity: 1;
+  transform: scale(1);
+  transition: opacity 220ms var(--ease-out), transform 220ms var(--ease-out), overlay 220ms allow-discrete, display 220ms allow-discrete;
+  @starting-style {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+}
+dialog.modal:not([open]) {
+  opacity: 0;
+  transform: scale(0.98);
+  transition-duration: 150ms;
+}
+dialog.modal::backdrop {
+  background: rgb(20 20 20 / 0.32);
+  transition: opacity 220ms ease, overlay 220ms allow-discrete, display 220ms allow-discrete;
+  @starting-style {
+    opacity: 0;
+  }
+}
+
+/* Panel lateral móvil (curva de cajón tipo iOS). */
+.drawer {
+  transition: transform 320ms var(--ease-drawer);
+}
+
+/* Entrada escalonada de grupos (una por contenedor, retardos cortos y desiguales). */
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+}
+.stagger > * {
+  animation: rise 280ms var(--ease-out) both;
+}
+.stagger > *:nth-child(2) { animation-delay: 40ms; }
+.stagger > *:nth-child(3) { animation-delay: 70ms; }
+.stagger > *:nth-child(4) { animation-delay: 95ms; }
+.stagger > *:nth-child(5) { animation-delay: 115ms; }
+.stagger > *:nth-child(n + 6) { animation-delay: 130ms; }
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+.spinner {
+  animation: spin 600ms linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .press:active:not(:disabled),
+  .lift:hover {
+    transform: none;
+  }
+  .stagger > * {
+    animation: fade 200ms ease both;
+  }
+  .drawer,
+  .pop,
+  dialog.modal {
+    transition-property: opacity;
+  }
+}
+@keyframes fade {
+  from {
+    opacity: 0;
+  }
+}
+
+.prose-doc {
+  white-space: pre-wrap;
+  line-height: 1.7;
+  font-size: 15px;
+}
+
+.scroll-thin {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-line-strong) transparent;
+}
+
+@keyframes sheet {
+  from {
+    transform: translateX(100%);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  [class*="animate-[sheet"] {
+    animation: fade 200ms ease both !important;
+  }
+}
